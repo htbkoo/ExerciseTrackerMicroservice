@@ -1,0 +1,16 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+    <GroovyCodeStyleSettings>
+      <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+      <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+    </GroovyCodeStyleSettings>
+    <JavaCodeStyleSettings>
+      <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+      <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+    </JavaCodeStyleSettings>
+    <TypeScriptCodeStyleSettings>
+      <option name="FORCE_SEMICOLON_STYLE" value="true" />
+      <option name="SPACES_WITHIN_IMPORTS" value="true" />
+    </TypeScriptCodeStyleSettings>
+  </code_scheme>
+</component>
