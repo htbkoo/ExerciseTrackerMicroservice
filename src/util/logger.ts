@@ -5,7 +5,7 @@ import { isProd } from "./envUtils";
 const logger = new (Logger)({
     transports: [
         new (winston.transports.Console)({level: isProd ? "error" : "debug"}),
-        new (winston.transports.File)({filename: "debug.log", level: "debug"})
+        new (winston.transports.File)({filename: "logs/debug.log", level: "debug"})
     ]
 });
 
