@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
+export type UserId = string;
+
 export type UserModel = mongoose.Document & {
-    username: string
+    username: string,
+    userId: UserId
 };
 
 const userSchema = new mongoose.Schema({

@@ -1,9 +1,10 @@
 import { prop, Typegoose } from "typegoose";
 import * as mongoose from "mongoose";
+import { UserId } from "./User";
 
 class ExerciseSchema extends Typegoose {
     @prop({required: true, unique: true})
-    userId: string;
+    userId: UserId;
     @prop({required: true})
     description: string;
     @prop({required: true})
