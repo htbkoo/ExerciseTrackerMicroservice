@@ -5,17 +5,15 @@ import bodyParser from "body-parser";
 import logger from "./util/logger";
 import lusca from "lusca";
 import dotenv from "dotenv";
-import mongo from "connect-mongo";
 import flash from "express-flash";
 import path from "path";
-import mongoose from "mongoose";
 import passport from "passport";
 import expressValidator from "express-validator";
 import bluebird from "bluebird";
+import { setupMongoDb } from "./external/database/MongoDbConnector";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
-import { NO_OP } from "./util/objUtils";
 
-const MongoStore = mongo(session);
+logger.info("Start setting up app.");
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({path: ".env.example"});
@@ -34,14 +32,7 @@ import * as passportConfig from "./config/passport";
 const app = express();
 
 // Connect to MongoDB
-const mongoUrl = MONGODB_URI;
-(<any>mongoose).Promise = bluebird;
-mongoose.connect(mongoUrl, {useMongoClient: true})
-    .then(NO_OP) /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
-    .catch(err => {
-        logger.error("MongoDB connection error. Please make sure MongoDB is running. " + err);
-        process.exit();
-    });
+let mongoConnector = setupMongoDb(MONGODB_URI, bluebird);
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
@@ -55,10 +46,7 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: SESSION_SECRET,
-    store: new MongoStore({
-        url: mongoUrl,
-        autoReconnect: true
-    })
+    store: mongoConnector.getMongoStore(session)
 }));
 app.use(passport.initialize());
 app.use(passport.session());
