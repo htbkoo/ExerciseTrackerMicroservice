@@ -1,19 +1,21 @@
-import MongodbMemoryServer from "mongodb-memory-server";
 import session from "express-session";
 import mongoose from "mongoose";
-import mongo from "connect-mongo"; // INFO: import of connect-mongo MUST go AFTER import of mongoose, or the import will hang forever
+import mongo from "connect-mongo";
+
+import logger from "../../../util/logger"; // INFO: import of connect-mongo MUST go AFTER import of mongoose, or the import will hang forever
 
 type MongoStoreCreator = (s: typeof session) => mongo.MongoStore;
 
-const mongoServer = new MongodbMemoryServer();
+const mongoUri: string = (<any>global).__MONGO_URI__;
+if (!mongoUri) {
+    logger.error(`mongoUri is ${mongoUri} - very likely the tests will fail`);
+}
 
 function setMongoosePromise(promiseClass: any) {
     (<any>mongoose).Promise = promiseClass;
 }
 
 async function connectMongoose() {
-    const mongoUri: string = await getMongoDbConnectionString();
-
     const mongooseOpts = { // options for mongoose 4.11.3 and above
         autoReconnect: true,
         reconnectTries: Number.MAX_VALUE,
@@ -44,23 +46,17 @@ function createMongoStore(s: typeof session, mongoUrl: string) {
     });
 }
 
-function getMongoDbConnectionString() {
-    return mongoServer.getConnectionString();
-}
-
 // Connect to MongoDB
-function setupMongoDb(mongoUrl: string, promiseClass: any): { afterConnect: Promise<any>, getMongoStore: MongoStoreCreator } {
+// noinspection JSUnusedGlobalSymbols
+function setupMongoDb(_: string, promiseClass: any): { afterConnect: Promise<any>, getMongoStore: MongoStoreCreator } {
     setMongoosePromise(promiseClass);
     return {
         afterConnect: connectMongoose(),
         getMongoStore(s: typeof session) {
-            return createMongoStore(s, "");
+            return createMongoStore(s, mongoUri);
         }
     };
 }
 
-// you may stop mongod manually
-// mongod.stop();
-// or it will be stopped automatically when you exit from script
-
+// noinspection JSUnusedGlobalSymbols
 export { setupMongoDb };
