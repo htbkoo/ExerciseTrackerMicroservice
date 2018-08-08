@@ -32,7 +32,7 @@ import * as passportConfig from "./config/passport";
 const app = express();
 
 // Connect to MongoDB
-let mongoConnector = setupMongoDb(MONGODB_URI, bluebird);
+const mongoConnector = setupMongoDb(MONGODB_URI, bluebird);
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
