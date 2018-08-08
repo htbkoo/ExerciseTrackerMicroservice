@@ -15,5 +15,6 @@ module.exports = {
         '**/test/**/*.(test|spec).(ts|js)'
     ],
     testEnvironment: 'node',
-    setupFiles: ["./test/setupTests.ts"]
+    setupFiles: ["./test/setupTests.ts"],
+    globalTeardown: "./test/globalTeardown.js"
 };
