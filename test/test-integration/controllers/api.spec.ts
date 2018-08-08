@@ -1,7 +1,9 @@
 import "../../utils/dbSetup";
 
 import request from "supertest";
+
 import app from "../../../src/app";
+import User from "../../../src/models/User";
 
 describe("GET /api", () => {
     it("should return 200 OK", () => {
@@ -11,6 +13,15 @@ describe("GET /api", () => {
 });
 
 describe("POST /api/exercise/add", function () {
+    const user = new User({userId: "1", username: "some user name"});
+    beforeEach(function () {
+        user.save();
+    });
+
+    afterEach(function () {
+        user.remove();
+    });
+
     it("should return 200 OK if exercisePersistService.addExercise return OK", function () {
         // given
         const url = "/api/exercise/add";
@@ -19,17 +30,10 @@ describe("POST /api/exercise/add", function () {
 
         // when
         // then
-        /*
-        {
-          "username": "Create a New User2",
-          "duration": 10,
-          "description": "some",
-          "_id": "HJcSm5MSX",
-          "date": "Sun Aug 05 2018"
-        }
-        * */
         const expectedResponse = {
-            ...params,
+            userId: "1",
+            duration: 10,
+            description: "some",
             username: "some user name",
             date: "2018-08-04"
         };
