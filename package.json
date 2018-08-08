@@ -72,6 +72,7 @@
     "@types/lodash": "^4.14.91",
     "@types/lusca": "^1.5.0",
     "@types/mongodb": "^3.0.5",
+    "@types/mongodb-memory-server": "^1.8.0",
     "@types/mongoose": "5.x.x",
     "@types/morgan": "^1.7.35",
     "@types/node": "^9.4.6",
