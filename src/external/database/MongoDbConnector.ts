@@ -1,7 +1,7 @@
 import session from "express-session";
 import logger from "../../util/logger";
-import mongo from "connect-mongo";
 import mongoose from "mongoose";
+import mongo from "connect-mongo"; // INFO: import of connect-mongo MUST go AFTER import of mongoose, or the import will hang forever
 
 import { NO_OP } from "../../util/objUtils";
 
