@@ -39,7 +39,9 @@ dist/**/*
 
 # Self - Start
 /.vscode/
+**/__local__/
 # Self - End
+
 ### Node template
 # Logs
 npm-debug.log*

@@ -29,7 +29,7 @@ function createMongoStore(s: typeof session, mongoUrl: string) {
 }
 
 // Connect to MongoDB
-function setupMongoDb(mongoUrl: string, promiseClass: any): { afterConnect: Promise<void>, getMongoStore: MongoStoreCreator } {
+function setupMongoDb(mongoUrl: string, promiseClass: any): { afterConnect: Promise<any>, getMongoStore: MongoStoreCreator } {
     setMongoosePromise(promiseClass);
     return {
         afterConnect: connectMongoose(mongoUrl),

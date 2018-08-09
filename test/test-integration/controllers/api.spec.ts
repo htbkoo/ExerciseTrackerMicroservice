@@ -1,5 +1,7 @@
 import request from "supertest";
+
 import app from "../../../src/app";
+import User from "../../../src/models/User";
 
 describe("GET /api", () => {
     it("should return 200 OK", () => {
@@ -8,26 +10,48 @@ describe("GET /api", () => {
     });
 });
 
-describe("POST /api/exercise/add", function () {
-    it("should return 200 OK if exercisePersistService.addExercise return OK", function () {
+describe("POST /api/exercise/new-user", function () {
+    it("should return 200 OK if user created successfully", function () {
         // given
-        const url = "/api/exercise/add";
-        const params = {userId: "1", duration: 10, description: "some"};
-        const data = Object.keys(params).map((key: keyof typeof params) => `${key}=${params[key]}`).join("&");
+        const url = "/api/exercise/new-user";
+        const params = {username: "username"};
+        const data = convertToPostData(params);
 
         // when
         // then
-        /*
-        {
-          "username": "Create a New User2",
-          "duration": 10,
-          "description": "some",
-          "_id": "HJcSm5MSX",
-          "date": "Sun Aug 05 2018"
-        }
-        * */
         const expectedResponse = {
-            ...params,
+            userId: "someId",
+            username: "username"
+        };
+        return request(app)
+            .post(url)
+            .send(data)
+            .expect(200, expectedResponse);
+    });
+});
+
+describe("POST /api/exercise/add", function () {
+    const user = new User({userId: "1", username: "some user name"});
+    beforeEach(function () {
+        user.save();
+    });
+
+    afterEach(function () {
+        user.remove();
+    });
+
+    it("should return 200 OK if exercise saved successfully", function () {
+        // given
+        const url = "/api/exercise/add";
+        const params = {userId: "1", duration: 10, description: "some"};
+        const data = convertToPostData(params);
+
+        // when
+        // then
+        const expectedResponse = {
+            userId: "1",
+            duration: 10,
+            description: "some",
             username: "some user name",
             date: "2018-08-04"
         };
@@ -37,3 +61,7 @@ describe("POST /api/exercise/add", function () {
             .expect(200, expectedResponse);
     });
 });
+
+function convertToPostData(params: object): string {
+    return Object.keys(params).map((key: keyof typeof params) => `${key}=${params[key]}`).join("&");
+}
