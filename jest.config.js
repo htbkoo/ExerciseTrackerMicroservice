@@ -16,5 +16,7 @@ module.exports = {
     ],
     testEnvironment: 'node',
     setupFiles: ["./test/setupTests.ts"],
-    globalTeardown: "./test/globalTeardown.js"
+    globalTeardown: "./test/globalTeardown.js",
+    globalSetup: "./test/globalSetup.js",
+    testPathIgnorePatterns: ["/node_modules/", "/dist/.*"]
 };

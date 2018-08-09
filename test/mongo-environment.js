@@ -1,30 +1,7 @@
-// setup.js
-const path = require('path');
-
-const fs = require('fs');
-
-const globalConfigPath = path.join(__dirname, '/__local__/globalConfig.json');
-
-
 // mongo-environment.js
 const NodeEnvironment = require('jest-environment-node');
-
-async function setupDB() {
-    const MongodbMemoryServer = require('mongodb-memory-server');
-
-    const mongoServer = new MongodbMemoryServer.MongoMemoryServer();
-
-    const mongoConfig = {
-        mongoDBName: 'jest',
-        mongoUri: await mongoServer.getConnectionString(),
-    };
-
-    // Write global config to disk because all tests run in different contexts.
-    fs.writeFileSync(globalConfigPath, JSON.stringify(mongoConfig));
-
-    // Set reference to mongod in order to close the server during teardown.
-    global.__MONGOD__ = mongoServer;
-}
+const fs = require('fs');
+const {globalConfigPath} = require("./utils/setupConstants");
 
 module.exports = class MongoEnvironment extends NodeEnvironment {
     constructor(config) {
@@ -33,10 +10,6 @@ module.exports = class MongoEnvironment extends NodeEnvironment {
 
     async setup() {
         console.log('Setup MongoDB Test Environment');
-
-        if (!global.__MONGOD__) {
-            await setupDB();
-        }
 
         const globalConfig = JSON.parse(fs.readFileSync(globalConfigPath, 'utf-8'));
 
