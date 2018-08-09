@@ -10,6 +10,26 @@ describe("GET /api", () => {
     });
 });
 
+describe("POST /api/exercise/new-user", function () {
+    it("should return 200 OK if user created successfully", function () {
+        // given
+        const url = "/api/exercise/new-user";
+        const params = {username: "username"};
+        const data = convertToPostData(params);
+
+        // when
+        // then
+        const expectedResponse = {
+            userId: "someId",
+            username: "username"
+        };
+        return request(app)
+            .post(url)
+            .send(data)
+            .expect(200, expectedResponse);
+    });
+});
+
 describe("POST /api/exercise/add", function () {
     const user = new User({userId: "1", username: "some user name"});
     beforeEach(function () {
@@ -20,11 +40,11 @@ describe("POST /api/exercise/add", function () {
         user.remove();
     });
 
-    it("should return 200 OK if exercisePersistService.addExercise return OK", function () {
+    it("should return 200 OK if exercise saved successfully", function () {
         // given
         const url = "/api/exercise/add";
         const params = {userId: "1", duration: 10, description: "some"};
-        const data = Object.keys(params).map((key: keyof typeof params) => `${key}=${params[key]}`).join("&");
+        const data = convertToPostData(params);
 
         // when
         // then
@@ -41,3 +61,7 @@ describe("POST /api/exercise/add", function () {
             .expect(200, expectedResponse);
     });
 });
+
+function convertToPostData(params: object): string {
+    return Object.keys(params).map((key: keyof typeof params) => `${key}=${params[key]}`).join("&");
+}
