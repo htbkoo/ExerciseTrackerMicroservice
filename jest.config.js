@@ -11,12 +11,5 @@ module.exports = {
     transform: {
         '^.+\\.(ts|tsx)$': './node_modules/ts-jest/preprocessor.js'
     },
-    testMatch: [
-        '**/test/**/*.(test|spec).(ts|js)'
-    ],
-    testEnvironment: 'node',
-    setupFiles: ["./test/setupTests.ts"],
-    globalTeardown: "./test/globalTeardown.js",
-    globalSetup: "./test/globalSetup.js",
-    testPathIgnorePatterns: ["/node_modules/", "/dist/.*"]
+    testPathIgnorePatterns: ["/node_modules/", "/dist/.*"],
 };
