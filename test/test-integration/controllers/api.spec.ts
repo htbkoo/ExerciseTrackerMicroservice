@@ -1,4 +1,5 @@
 import request from "supertest";
+import HttpStatus from "http-status";
 
 import app from "../../../src/app";
 import User from "../../../src/models/User";
@@ -8,7 +9,7 @@ import * as datetimeService from "../../../src/services/datetime/datetimeService
 describe("GET /api", () => {
     it("should return 200 OK", () => {
         return request(app).get("/api")
-            .expect(200);
+            .expect(HttpStatus.OK);
     });
 });
 
@@ -28,7 +29,7 @@ describe("POST /api/exercise/new-user", function () {
         return request(app)
             .post(url)
             .send(data)
-            .expect(200, expectedResponse);
+            .expect(HttpStatus.OK, expectedResponse);
     });
 });
 
@@ -62,7 +63,7 @@ describe("POST /api/exercise/add", function () {
         return request(app)
             .post(url)
             .send(data)
-            .expect(200, expectedResponse);
+            .expect(HttpStatus.OK, expectedResponse);
     });
 });
 
