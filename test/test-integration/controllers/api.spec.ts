@@ -3,6 +3,8 @@ import request from "supertest";
 import app from "../../../src/app";
 import User from "../../../src/models/User";
 
+import * as datetimeService from "../../../src/services/datetime/datetimeService";
+
 describe("GET /api", () => {
     it("should return 200 OK", () => {
         return request(app).get("/api")
@@ -42,6 +44,8 @@ describe("POST /api/exercise/add", function () {
 
     it("should return 200 OK if exercise saved successfully", function () {
         // given
+        jest.spyOn(datetimeService, "todayInUtc").mockImplementation(() => "someDate");
+
         const url = "/api/exercise/add";
         const params = {userId: "1", duration: 10, description: "some"};
         const data = convertToPostData(params);
@@ -53,7 +57,7 @@ describe("POST /api/exercise/add", function () {
             duration: 10,
             description: "some",
             username: "some user name",
-            date: "2018-08-04"
+            date: "someDate"
         };
         return request(app)
             .post(url)

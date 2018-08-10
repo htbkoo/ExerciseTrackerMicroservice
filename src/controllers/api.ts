@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import Exercise from "../models/Exercise";
 import User from "../models/User";
 import logger from "../util/logger";
+import { todayInUtc } from "../services/datetime/datetimeService";
 
 /**
  * GET /api
@@ -65,7 +66,7 @@ export let postAddExercise = (req: Request, res: Response, next: NextFunction) =
     }
 
     const {userId, description, duration, date} = req.body;
-    const docs = {userId, description, duration, date: !!date ? date : todayInString()};
+    const docs = {userId, description, duration, date: !!date ? date : todayInUtc()};
     const exercise = new Exercise(docs);
     exercise.save()
         .then(() => {
@@ -84,7 +85,3 @@ export let postAddExercise = (req: Request, res: Response, next: NextFunction) =
             next(error);
         });
 };
-
-function todayInString() {
-    return "2018-08-04";
-}

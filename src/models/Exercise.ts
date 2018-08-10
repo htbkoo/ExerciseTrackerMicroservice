@@ -9,7 +9,7 @@ class ExerciseSchema extends Typegoose {
     @prop({required: true})
     duration: number;
     @prop({})
-    date?: Date;
+    date?: string;
 }
 
 export const Exercise = new ExerciseSchema().getModelForClass(ExerciseSchema);
