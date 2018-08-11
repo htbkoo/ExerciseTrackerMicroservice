@@ -34,13 +34,15 @@ describe("POST /api/exercise/new-user", function () {
 });
 
 describe("POST /api/exercise/add", function () {
-    const user = new User({userId: "1", username: "some user name"});
+    const userId = "1";
+    let user;
     beforeEach(function () {
-        user.save();
+        user = new User({userId, username: "some user name"});
+        return user.save();
     });
 
     afterEach(function () {
-        user.remove();
+        return user.remove();
     });
 
     it("should return 200 OK if exercise saved successfully", function () {
@@ -48,13 +50,13 @@ describe("POST /api/exercise/add", function () {
         jest.spyOn(datetimeService, "todayInUtc").mockImplementation(() => "someDate");
 
         const url = "/api/exercise/add";
-        const params = {userId: "1", duration: 10, description: "some"};
+        const params = {userId, duration: 10, description: "some"};
         const data = convertToPostData(params);
 
         // when
         // then
         const expectedResponse = {
-            userId: "1",
+            userId,
             duration: 10,
             description: "some",
             username: "some user name",
