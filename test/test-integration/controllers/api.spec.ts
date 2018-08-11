@@ -35,6 +35,8 @@ describe("POST /api/exercise/new-user", function () {
 
 describe("POST /api/exercise/add", function () {
     const userId = "1";
+    const mockToday = "2018-08-10";
+
     let user;
     beforeEach(function () {
         user = new User({userId, username: "some user name"});
@@ -48,7 +50,7 @@ describe("POST /api/exercise/add", function () {
 
     it("should return 200 OK if exercise saved successfully", function () {
         // given
-        jest.spyOn(datetimeService, "todayInUtc").mockImplementation(() => "someDate");
+        jest.spyOn(datetimeService, "todayInUtc").mockImplementation(() => mockToday);
 
         const url = "/api/exercise/add";
         const params = {userId, duration: 10, description: "some"};
@@ -61,7 +63,7 @@ describe("POST /api/exercise/add", function () {
             duration: 10,
             description: "some",
             username: "some user name",
-            date: "someDate"
+            date: mockToday
         };
         return request(app)
             .post(url)
