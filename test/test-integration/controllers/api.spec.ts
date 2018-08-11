@@ -87,6 +87,27 @@ describe("POST /api/exercise/add", function () {
         })
     );
 
+    [
+        {field: "userId", validationMessage: "userId is missing"},
+    ].forEach(({field, validationMessage}) =>
+        it(`should return 500 INTERNAL_SERVER_ERROR if ${field} is missing in request`, function () {
+            // given
+            const params = {userId, duration: 11, description: "another", date: "2019-01-01"};
+            delete params[field];
+            const data = convertToPostData(params);
+
+            // when
+            // then
+            return request(app)
+                .post("/api/exercise/add")
+                .send(data)
+                .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+                .then(({error, text}) => {
+                    expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
+                    expect(text).toContain(validationMessage);
+                });
+        })
+    );
 });
 
 function convertToPostData(params: object): string {
