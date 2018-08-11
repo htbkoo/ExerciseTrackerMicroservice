@@ -37,13 +37,15 @@ describe("POST /api/exercise/add", function () {
     const userId = "1";
     const mockToday = "2018-08-10";
 
-    let user;
-    beforeEach(function () {
-        user = new User({userId, username: "some user name"});
+    const user = new User({userId, username: "some user name"});
+    beforeAll(function () {
+        console.log("setup beforeAll for POST /api/exercise/add");
+        jest.spyOn(datetimeService, "todayInUtc").mockImplementation(() => mockToday);
         return user.save();
     });
 
-    afterEach(function () {
+    afterAll(function () {
+        console.log("teardown afterAll for POST /api/exercise/add");
         jest.restoreAllMocks();
         return user.remove();
     });

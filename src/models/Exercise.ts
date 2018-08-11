@@ -2,7 +2,7 @@ import { prop, Typegoose } from "typegoose";
 import { UserId } from "./User";
 
 class ExerciseSchema extends Typegoose {
-    @prop({required: true, unique: true})
+    @prop({required: true})
     userId: UserId;
     @prop({required: true})
     description: string;
