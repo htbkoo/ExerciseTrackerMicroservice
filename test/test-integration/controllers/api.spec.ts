@@ -42,6 +42,7 @@ describe("POST /api/exercise/add", function () {
     });
 
     afterEach(function () {
+        jest.restoreAllMocks();
         return user.remove();
     });
 
