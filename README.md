@@ -9,7 +9,7 @@
 ### How do I get set up? ###
 
 * Summary of set up: ```npm install``` to download dependencies and the project is good to go.
-** Note: ```yarn``` is [NOT supported](https://github.com/Microsoft/TypeScript-Node-Starter/issues/55) as this project is bootstrapped by [TypeScript-Node-Starter](https://github.com/Microsoft/TypeScript-Node-Starter#typescript-node-starter)
+    * Note: ```yarn``` is [NOT supported](https://github.com/Microsoft/TypeScript-Node-Starter/issues/55) as this project is bootstrapped by [TypeScript-Node-Starter](https://github.com/Microsoft/TypeScript-Node-Starter#typescript-node-starter)
 * Configuration: N/A 
 * Dependencies: Listed at package.json
 * Database configuration: N/A
