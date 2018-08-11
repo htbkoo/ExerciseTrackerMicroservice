@@ -50,28 +50,43 @@ describe("POST /api/exercise/add", function () {
         return user.remove();
     });
 
-    it("should return 200 OK if exercise saved successfully", function () {
-        // given
-        jest.spyOn(datetimeService, "todayInUtc").mockImplementation(() => mockToday);
+    [
+        {
+            isWithDate: "without date",
+            params: {userId, duration: 10, description: "some"},
+            expectedResponse: {
+                userId,
+                duration: 10,
+                description: "some",
+                username: "some user name",
+                date: mockToday
+            }
+        },
+        {
+            isWithDate: "with date",
+            params: {userId, duration: 11, description: "another", date: "2019-01-01"},
+            expectedResponse: {
+                userId,
+                duration: 11,
+                description: "another",
+                username: "some user name",
+                date: "2019-01-01"
+            }
+        },
+    ].forEach(({isWithDate, params, expectedResponse}) =>
+        it(`should return 200 OK if exercise (${isWithDate}) saved successfully`, function () {
+            // given
+            const data = convertToPostData(params);
 
-        const url = "/api/exercise/add";
-        const params = {userId, duration: 10, description: "some"};
-        const data = convertToPostData(params);
+            // when
+            // then
+            return request(app)
+                .post("/api/exercise/add")
+                .send(data)
+                .expect(HttpStatus.OK, expectedResponse);
+        })
+    );
 
-        // when
-        // then
-        const expectedResponse = {
-            userId,
-            duration: 10,
-            description: "some",
-            username: "some user name",
-            date: mockToday
-        };
-        return request(app)
-            .post(url)
-            .send(data)
-            .expect(HttpStatus.OK, expectedResponse);
-    });
 });
 
 function convertToPostData(params: object): string {
