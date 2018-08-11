@@ -88,12 +88,14 @@ describe("POST /api/exercise/add", function () {
     );
 
     [
-        {field: "userId", validationMessage: "userId is missing"},
-    ].forEach(({field, validationMessage}) =>
-        it(`should return 500 INTERNAL_SERVER_ERROR if ${field} is missing in request`, function () {
+        {missingField: "userId", validationMessage: "userId is missing"},
+        {missingField: "description", validationMessage: "description is missing"},
+        {missingField: "duration", validationMessage: "duration must be numeric"},
+    ].forEach(({missingField, validationMessage}) =>
+        it(`should return 500 INTERNAL_SERVER_ERROR if ${missingField} is missing in request`, function () {
             // given
             const params = {userId, duration: 11, description: "another", date: "2019-01-01"};
-            delete params[field];
+            delete params[missingField];
             const data = convertToPostData(params);
 
             // when
