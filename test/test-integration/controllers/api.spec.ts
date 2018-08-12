@@ -95,6 +95,7 @@ describe("POST /api/exercise/add", function () {
         it(`should return 500 INTERNAL_SERVER_ERROR if ${missingField} is missing in request`, function () {
             // given
             const params = {userId, duration: 11, description: "another", date: "2019-01-01"};
+            // @ts-ignore
             delete params[missingField];
             const data = convertToPostData(params);
 
@@ -110,6 +111,23 @@ describe("POST /api/exercise/add", function () {
                 });
         })
     );
+
+    it(`should return 500 INTERNAL_SERVER_ERROR if provided date is not in YYYY-MM-DD format`, function () {
+        // given
+        const params = {userId, duration: 11, description: "another", date: "some invalid format"};
+        const data = convertToPostData(params);
+
+        // when
+        // then
+        return request(app)
+            .post("/api/exercise/add")
+            .send(data)
+            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+            .then(({error, text}) => {
+                expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
+                expect(text).toContain("date must be in YYYY-MM-DD format");
+            });
+    });
 });
 
 function convertToPostData(params: object): string {

@@ -1,6 +1,8 @@
 "use strict";
 
 import { NextFunction, Request, Response } from "express";
+import { DateTime } from "luxon";
+
 import Exercise from "../models/Exercise";
 import User from "../models/User";
 import logger from "../util/logger";
@@ -57,6 +59,10 @@ export let postAddExercise = (req: Request, res: Response, next: NextFunction) =
     req.check("userId", "userId is missing").exists();
     req.check("description", "description is missing").exists();
     req.check("duration", "duration must be numeric").isNumeric();
+    // @ts-ignore
+    req.check("date", "date must be in YYYY-MM-DD format").optional().custom((value) => {
+        return DateTime.fromFormat(value, "yyyy-MM-dd").isValid;
+    });
 
     const errors = req.validationErrors();
     if (errors) {
