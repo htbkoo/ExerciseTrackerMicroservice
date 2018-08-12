@@ -40,10 +40,7 @@ describe("POST /api/exercise/new-user", function () {
     });
 
     function postAddUser(params: object) {
-        const data: string = convertToPostData(params);
-        return supertest(app)
-            .post("/api/exercise/new-user")
-            .send(data);
+        return postWithData("/api/exercise/new-user", params);
     }
 });
 
@@ -124,16 +121,20 @@ describe("POST /api/exercise/add", function () {
     });
 
     function postAddExercise(params: object) {
-        const data: string = convertToPostData(params);
-        return supertest(app)
-            .post("/api/exercise/add")
-            .send(data);
+        return postWithData("/api/exercise/add", params);
     }
 
     function assertErrorMessage(expected: string) {
         return errorAssertion("cannot POST /api/exercise/add (500)", expected);
     }
 });
+
+function postWithData(url: string, params: object): supertest.Test {
+    const data: string = convertToPostData(params);
+    return supertest(app)
+        .post(url)
+        .send(data);
+}
 
 function errorAssertion(errorMessage: string, expected: string) {
     return (response: supertest.Response) => {
