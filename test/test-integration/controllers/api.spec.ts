@@ -44,11 +44,7 @@ describe("POST /api/exercise/new-user", function () {
             .post(url)
             .send(data)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then((response: supertest.Response) => {
-                const {error, text} = response;
-                expect(error.message).toEqual("cannot POST /api/exercise/new-user (500)");
-                expect(text).toContain("username is missing");
-            });
+            .then(errorAssertion("cannot POST /api/exercise/new-user (500)", "username is missing"));
     });
 });
 
@@ -136,11 +132,11 @@ describe("POST /api/exercise/add", function () {
     }
 
     function assertErrorMessage(expected: string) {
-        return getErrorAssertion("cannot POST /api/exercise/add (500)", expected);
+        return errorAssertion("cannot POST /api/exercise/add (500)", expected);
     }
 });
 
-function getErrorAssertion(errorMessage: string, expected: string) {
+function errorAssertion(errorMessage: string, expected: string) {
     return (response: supertest.Response) => {
         const {error, text} = response;
         expect(error.message).toEqual(errorMessage);
