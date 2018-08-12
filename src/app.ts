@@ -20,8 +20,10 @@ dotenv.config({path: ".env.example"});
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
-import { getApi, postAddUser, postAddExercise, checkAddExerciseInputs } from "./controllers/api";
+import { getApi } from "./controllers/api";
 import { validateFor } from "./controllers/common";
+import { checkAddExerciseInputs, postAddExercise } from "./controllers/api/exercise";
+import { postAddUser } from "./controllers/api/user";
 
 // Create Express server
 const app = express();
