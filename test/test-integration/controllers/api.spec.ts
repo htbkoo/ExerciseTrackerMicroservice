@@ -31,6 +31,25 @@ describe("POST /api/exercise/new-user", function () {
             .send(data)
             .expect(HttpStatus.OK, expectedResponse);
     });
+
+    it(`should return 500 INTERNAL_SERVER_ERROR if username is missing in request`, function () {
+        // given
+        const url = "/api/exercise/new-user";
+        const params = {};
+        const data = convertToPostData(params);
+
+        // when
+        // then
+        return supertest(app)
+            .post(url)
+            .send(data)
+            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+            .then((response: supertest.Response) => {
+                const {error, text} = response;
+                expect(error.message).toEqual("cannot POST /api/exercise/new-user (500)");
+                expect(text).toContain("username is missing");
+            });
+    });
 });
 
 describe("POST /api/exercise/add", function () {
