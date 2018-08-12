@@ -16,9 +16,7 @@ describe("GET /api", () => {
 describe("POST /api/exercise/new-user", function () {
     it("should return 200 OK if user created successfully", function () {
         // given
-        const url = "/api/exercise/new-user";
         const params = {username: "username"};
-        const data = convertToPostData(params);
 
         // when
         // then
@@ -26,26 +24,27 @@ describe("POST /api/exercise/new-user", function () {
             userId: "someId",
             username: "username"
         };
-        return supertest(app)
-            .post(url)
-            .send(data)
+        return postAddUser(params)
             .expect(HttpStatus.OK, expectedResponse);
     });
 
     it(`should return 500 INTERNAL_SERVER_ERROR if username is missing in request`, function () {
         // given
-        const url = "/api/exercise/new-user";
         const params = {};
-        const data = convertToPostData(params);
 
         // when
         // then
-        return supertest(app)
-            .post(url)
-            .send(data)
+        return postAddUser(params)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
             .then(errorAssertion("cannot POST /api/exercise/new-user (500)", "username is missing"));
     });
+
+    function postAddUser(params: object) {
+        const data: string = convertToPostData(params);
+        return supertest(app)
+            .post("/api/exercise/new-user")
+            .send(data);
+    }
 });
 
 describe("POST /api/exercise/add", function () {
