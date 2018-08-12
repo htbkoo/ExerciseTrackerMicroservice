@@ -20,7 +20,8 @@ dotenv.config({path: ".env.example"});
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
-import * as apiController from "./controllers/api";
+import { getApi, postAddUser, postAddExercise, checkAddExerciseInputs } from "./controllers/api";
+import { validateFor } from "./controllers/common";
 
 // Create Express server
 const app = express();
@@ -77,8 +78,8 @@ app.get("/", homeController.index);
 /**
  * API examples routes.
  */
-app.get("/api", apiController.getApi);
-app.post("/api/exercise/new-user", apiController.postAddUser);
-app.post("/api/exercise/add", apiController.postAddExercise);
+app.get("/api", getApi);
+app.post("/api/exercise/new-user", postAddUser);
+app.post("/api/exercise/add", validateFor(checkAddExerciseInputs), postAddExercise);
 
 export default app;

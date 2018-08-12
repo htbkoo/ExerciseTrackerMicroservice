@@ -40,15 +40,25 @@ export let postAddUser = (req: Request, res: Response, next: NextFunction) => {
         .then(() => {
             res.send(docs);
         })
-        .catch(error => {
-            logger.error(error);
-            next(error);
-        });
+        .catch(next);
 };
 
 function getUserId() {
     return "someId";
 }
+
+export let checkAddExerciseInputs = (req: Request) => {
+    return new Promise(resolve => {
+        req.check("userId", "userId is missing").exists();
+        req.check("description", "description is missing").exists();
+        req.check("duration", "duration must be numeric").isNumeric();
+        // @ts-ignore
+        req.check("date", "date must be in YYYY-MM-DD format").optional().custom((value) => {
+            return DateTime.fromFormat(value, "yyyy-MM-dd").isValid;
+        });
+        resolve({req});
+    });
+};
 
 /*
 * POST /api/exercise/add
@@ -56,21 +66,6 @@ function getUserId() {
 * */
 
 export let postAddExercise = (req: Request, res: Response, next: NextFunction) => {
-    req.check("userId", "userId is missing").exists();
-    req.check("description", "description is missing").exists();
-    req.check("duration", "duration must be numeric").isNumeric();
-    // @ts-ignore
-    req.check("date", "date must be in YYYY-MM-DD format").optional().custom((value) => {
-        return DateTime.fromFormat(value, "yyyy-MM-dd").isValid;
-    });
-
-    const errors = req.validationErrors();
-    if (errors) {
-        req.flash("errors", errors);
-        // return res.redirect("/");
-        return next(JSON.stringify(errors));
-    }
-
     const {userId, description, duration, date} = req.body;
     const docs = {userId, description, duration, date: !!date ? date : todayInUtc()};
     const exercise = new Exercise(docs);
@@ -86,8 +81,5 @@ export let postAddExercise = (req: Request, res: Response, next: NextFunction) =
                 ...docs
             });
         })
-        .catch(error => {
-            logger.error(error);
-            next(error);
-        });
+        .catch(next);
 };
