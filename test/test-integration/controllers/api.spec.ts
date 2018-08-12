@@ -80,9 +80,7 @@ describe("POST /api/exercise/add", function () {
 
             // when
             // then
-            return request(app)
-                .post("/api/exercise/add")
-                .send(data)
+            return postAddExercise(data)
                 .expect(HttpStatus.OK, expectedResponse);
         })
     );
@@ -101,9 +99,7 @@ describe("POST /api/exercise/add", function () {
 
             // when
             // then
-            return request(app)
-                .post("/api/exercise/add")
-                .send(data)
+            return postAddExercise(data)
                 .expect(HttpStatus.INTERNAL_SERVER_ERROR)
                 .then(({error, text}) => {
                     expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
@@ -119,15 +115,19 @@ describe("POST /api/exercise/add", function () {
 
         // when
         // then
-        return request(app)
-            .post("/api/exercise/add")
-            .send(data)
+        return postAddExercise(data)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
             .then(({error, text}) => {
                 expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
                 expect(text).toContain("date must be in YYYY-MM-DD format");
             });
     });
+
+    function postAddExercise(data: string) {
+        return request(app)
+            .post("/api/exercise/add")
+            .send(data);
+    }
 });
 
 function convertToPostData(params: object): string {
