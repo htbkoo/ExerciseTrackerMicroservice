@@ -11,7 +11,7 @@ import { DateTime } from "luxon";
 * Add exercise
 * */
 
-export let checkAddExerciseInputs = (req: Request) => {
+export let checkAddExerciseInputs = (req: Request): Promise<any> => {
     return new Promise(resolve => {
         req.check("userId", "userId is missing").exists();
         req.check("description", "description is missing").exists();
