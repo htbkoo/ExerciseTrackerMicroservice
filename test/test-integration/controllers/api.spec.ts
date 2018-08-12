@@ -75,12 +75,7 @@ describe("POST /api/exercise/add", function () {
         },
     ].forEach(({isWithDate, params, expectedResponse}) =>
         it(`should return 200 OK if exercise (${isWithDate}) saved successfully`, function () {
-            // given
-            const data = convertToPostData(params);
-
-            // when
-            // then
-            return postAddExercise(data)
+            return postAddExercise(params)
                 .expect(HttpStatus.OK, expectedResponse);
         })
     );
@@ -92,14 +87,12 @@ describe("POST /api/exercise/add", function () {
     ].forEach(({missingField, validationMessage}) =>
         it(`should return 500 INTERNAL_SERVER_ERROR if ${missingField} is missing in request`, function () {
             // given
-            const params = {userId, duration: 11, description: "another", date: "2019-01-01"};
-            // @ts-ignore
-            delete params[missingField];
-            const data = convertToPostData(params);
+            const invalidParams: any = {userId, duration: 11, description: "another", date: "2019-01-01"};
+            delete invalidParams[missingField];
 
             // when
             // then
-            return postAddExercise(data)
+            return postAddExercise(invalidParams)
                 .expect(HttpStatus.INTERNAL_SERVER_ERROR)
                 .then(({error, text}) => {
                     expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
@@ -111,11 +104,10 @@ describe("POST /api/exercise/add", function () {
     it(`should return 500 INTERNAL_SERVER_ERROR if provided date is not in YYYY-MM-DD format`, function () {
         // given
         const params = {userId, duration: 11, description: "another", date: "some invalid format"};
-        const data = convertToPostData(params);
 
         // when
         // then
-        return postAddExercise(data)
+        return postAddExercise(params)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
             .then(({error, text}) => {
                 expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
@@ -123,7 +115,8 @@ describe("POST /api/exercise/add", function () {
             });
     });
 
-    function postAddExercise(data: string) {
+    function postAddExercise(params: object) {
+        const data: string = convertToPostData(params);
         return request(app)
             .post("/api/exercise/add")
             .send(data);
