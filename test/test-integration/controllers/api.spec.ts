@@ -1,4 +1,4 @@
-import request from "supertest";
+import supertest from "supertest";
 import HttpStatus from "http-status";
 
 import app from "../../../src/app";
@@ -8,7 +8,7 @@ import * as datetimeService from "../../../src/services/datetime/datetimeService
 
 describe("GET /api", () => {
     it("should return 200 OK", () => {
-        return request(app).get("/api")
+        return supertest(app).get("/api")
             .expect(HttpStatus.OK);
     });
 });
@@ -26,7 +26,7 @@ describe("POST /api/exercise/new-user", function () {
             userId: "someId",
             username: "username"
         };
-        return request(app)
+        return supertest(app)
             .post(url)
             .send(data)
             .expect(HttpStatus.OK, expectedResponse);
@@ -94,10 +94,7 @@ describe("POST /api/exercise/add", function () {
             // then
             return postAddExercise(invalidParams)
                 .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-                .then(({error, text}) => {
-                    expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
-                    expect(text).toContain(validationMessage);
-                });
+                .then(assertErrorTextContains(validationMessage));
         })
     );
 
@@ -109,17 +106,22 @@ describe("POST /api/exercise/add", function () {
         // then
         return postAddExercise(params)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(({error, text}) => {
-                expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
-                expect(text).toContain("date must be in YYYY-MM-DD format");
-            });
+            .then(assertErrorTextContains("date must be in YYYY-MM-DD format"));
     });
 
     function postAddExercise(params: object) {
         const data: string = convertToPostData(params);
-        return request(app)
+        return supertest(app)
             .post("/api/exercise/add")
             .send(data);
+    }
+
+    function assertErrorTextContains(expected: string) {
+        return (response: supertest.Response) => {
+            const {error, text} = response;
+            expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
+            expect(text).toContain(expected);
+        };
     }
 });
 
