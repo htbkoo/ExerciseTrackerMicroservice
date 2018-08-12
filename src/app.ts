@@ -20,7 +20,7 @@ dotenv.config({path: ".env.example"});
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
-import { getApi } from "./controllers/api";
+import { getApi } from "./controllers/api/api";
 import { validateFor } from "./controllers/common";
 import { checkAddExerciseInputs, postAddExercise } from "./controllers/api/exercise";
 import { postAddUser } from "./controllers/api/user";
