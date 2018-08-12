@@ -113,7 +113,7 @@ describe("POST /api/exercise/add", function () {
             // then
             return postAddExercise(invalidParams)
                 .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-                .then(assertErrorTextContains(validationMessage));
+                .then(assertErrorMessage(validationMessage));
         })
     );
 
@@ -125,7 +125,7 @@ describe("POST /api/exercise/add", function () {
         // then
         return postAddExercise(params)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(assertErrorTextContains("date must be in YYYY-MM-DD format"));
+            .then(assertErrorMessage("date must be in YYYY-MM-DD format"));
     });
 
     function postAddExercise(params: object) {
@@ -135,14 +135,18 @@ describe("POST /api/exercise/add", function () {
             .send(data);
     }
 
-    function assertErrorTextContains(expected: string) {
-        return (response: supertest.Response) => {
-            const {error, text} = response;
-            expect(error.message).toEqual("cannot POST /api/exercise/add (500)");
-            expect(text).toContain(expected);
-        };
+    function assertErrorMessage(expected: string) {
+        return getErrorAssertion("cannot POST /api/exercise/add (500)", expected);
     }
 });
+
+function getErrorAssertion(errorMessage: string, expected: string) {
+    return (response: supertest.Response) => {
+        const {error, text} = response;
+        expect(error.message).toEqual(errorMessage);
+        expect(text).toContain(expected);
+    };
+}
 
 function convertToPostData(params: object): string {
     return Object.keys(params).map((key: keyof typeof params) => `${key}=${params[key]}`).join("&");
