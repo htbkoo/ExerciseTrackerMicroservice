@@ -12,12 +12,13 @@ import expressValidator from "express-validator";
 import bluebird from "bluebird";
 import { setupMongoDb } from "./external/database/MongoDbConnector";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
+
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
 import { getApi } from "./controllers/api/api";
 import { validateFor } from "./controllers/common";
 import { checkAddExerciseInputs, postAddExercise } from "./controllers/api/exercise";
-import { postAddUser } from "./controllers/api/user";
+import { checkAddUserInputs, postAddUser } from "./controllers/api/user";
 
 logger.info("Start setting up app.");
 
@@ -62,11 +63,12 @@ app.use(
  * Primary app routes.
  */
 app.get("/", homeController.index);
+
 /**
  * API examples routes.
  */
 app.get("/api", getApi);
-app.post("/api/exercise/new-user", postAddUser);
+app.post("/api/exercise/new-user", validateFor(checkAddUserInputs), postAddUser);
 app.post("/api/exercise/add", validateFor(checkAddExerciseInputs), postAddExercise);
 
 export default app;

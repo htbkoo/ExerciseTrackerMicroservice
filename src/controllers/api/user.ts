@@ -7,16 +7,15 @@ import User from "../../models/User";
  * POST /api/exercise/new-user
  * Create a New User
  */
+
+export let checkAddUserInputs = (req: Request): Promise<any> => {
+    return new Promise(resolve => {
+        req.check("username", "username is missing").exists();
+        resolve({req});
+    });
+};
+
 export let postAddUser = (req: Request, res: Response, next: NextFunction) => {
-    req.check("username", "username is missing").exists();
-
-    const errors = req.validationErrors();
-    if (errors) {
-        req.flash("errors", errors);
-        // return res.redirect("/");
-        return next(JSON.stringify(errors));
-    }
-
     const {username} = req.body;
     const docs = {username, userId: newUserId()};
     const user = new User(docs);
