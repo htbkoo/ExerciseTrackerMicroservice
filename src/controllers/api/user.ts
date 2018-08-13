@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import uuidv4 from "uuid/v4";
+
 import User from "../../models/User";
 
 /**
@@ -16,7 +18,7 @@ export let postAddUser = (req: Request, res: Response, next: NextFunction) => {
     }
 
     const {username} = req.body;
-    const docs = {username, userId: getUserId()};
+    const docs = {username, userId: newUserId()};
     const user = new User(docs);
 
     user.save()
@@ -26,6 +28,6 @@ export let postAddUser = (req: Request, res: Response, next: NextFunction) => {
         .catch(next);
 };
 
-function getUserId() {
-    return "someId";
+function newUserId() {
+    return uuidv4();
 }
