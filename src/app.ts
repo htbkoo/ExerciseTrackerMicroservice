@@ -1,5 +1,5 @@
 import express from "express";
-import compression from "compression";  // compresses requests
+import compression from "compression"; // compresses requests
 import session from "express-session";
 import bodyParser from "body-parser";
 import logger from "./util/logger";
@@ -12,18 +12,17 @@ import expressValidator from "express-validator";
 import bluebird from "bluebird";
 import { setupMongoDb } from "./external/database/MongoDbConnector";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
-
-logger.info("Start setting up app.");
-
-// Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({path: ".env.example"});
-
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
 import { getApi } from "./controllers/api/api";
 import { validateFor } from "./controllers/common";
 import { checkAddExerciseInputs, postAddExercise } from "./controllers/api/exercise";
 import { postAddUser } from "./controllers/api/user";
+
+logger.info("Start setting up app.");
+
+// Load environment variables from .env file, where API keys and passwords are configured
+dotenv.config({path: ".env.example"});
 
 // Create Express server
 const app = express();
@@ -52,20 +51,6 @@ app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
     res.locals.user = req.user;
-    next();
-});
-app.use((req, res, next) => {
-    // After successful login, redirect back to the intended page
-    if (!req.user &&
-        req.path !== "/login" &&
-        req.path !== "/signup" &&
-        !req.path.match(/^\/auth/) &&
-        !req.path.match(/\./)) {
-        req.session.returnTo = req.path;
-    } else if (req.user &&
-        req.path == "/account") {
-        req.session.returnTo = req.path;
-    }
     next();
 });
 
