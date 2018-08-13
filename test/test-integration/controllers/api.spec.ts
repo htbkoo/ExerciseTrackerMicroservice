@@ -5,7 +5,7 @@ import app from "../../../src/app";
 import User from "../../../src/models/User";
 import * as datetimeService from "../../../src/services/datetime/datetimeService";
 
-const mockUuid  = require("../../../__mocks__/uuid").mockUuidV4;
+const mockUuid  = require("../../../__mocks__/uuid/v4").mockUuidV4;
 
 describe("GET /api", () => {
     it("should return 200 OK", () => {
