@@ -5,7 +5,7 @@ import app from "../../../src/app";
 import User from "../../../src/models/User";
 import * as datetimeService from "../../../src/services/datetime/datetimeService";
 
-const mockUuid  = require("../../../__mocks__/uuid/v4").mockUuidV4;
+const mockUuid = require("../../../__mocks__/uuid/v4").mockUuidV4;
 
 describe("GET /api", () => {
     it("should return 200 OK", () => {
@@ -15,6 +15,11 @@ describe("GET /api", () => {
 });
 
 describe("POST /api/exercise/new-user", function () {
+    const duplicatedUserName = "duplicated username";
+    afterAll(function () {
+        User.findOneAndRemove({username: duplicatedUserName});
+    });
+
     it("should return 200 OK if user created successfully", function () {
         // given
         const params = {username: "username"};
@@ -38,6 +43,17 @@ describe("POST /api/exercise/new-user", function () {
         return postAddUser(params)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
             .then(errorAssertion("cannot POST /api/exercise/new-user (500)", "username is missing"));
+    });
+
+    it(`should return 500 INTERNAL_SERVER_ERROR if duplicated username is specified`, function () {
+        // given
+        const params = {username: "duplicated username"};
+
+        // when
+        // then
+        return new User({...params, userId: "randomUuid"}).save()
+            .then(() => postAddUser(params).expect(HttpStatus.INTERNAL_SERVER_ERROR))
+            .then(errorAssertion("cannot POST /api/exercise/new-user (500)", "&#39;duplicated username&#39; is already in use"));
     });
 
     function postAddUser(params: object) {
