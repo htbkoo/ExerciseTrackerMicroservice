@@ -27,10 +27,7 @@ export let postAddExercise = (req: Request, res: Response, next: NextFunction) =
     const docs = {userId, description, duration, date: firstDefined(date, todayInUtc())};
     const exercise = new Exercise(docs);
     exercise.save()
-        .then(() => {
-            // TODO: to improve in case user not found
-            return User.findOne({userId});
-        })
+        .then(() => User.findOne({userId})) // TODO: to improve in case user not found
         .then(user => {
             logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
             res.send({
