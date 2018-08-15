@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
+import { DateTime } from "luxon";
+
 import { todayInUtc } from "../../services/datetime/datetimeService";
 import Exercise from "../../models/Exercise";
 import User from "../../models/User";
 import logger from "../../util/logger";
-import { DateTime } from "luxon";
-
+import { ValidationErrors } from "../common";
 
 /*
 * POST /api/exercise/add
@@ -13,11 +14,11 @@ import { DateTime } from "luxon";
 
 export let checkAddExerciseInputs = (req: Request): Promise<any> => {
     return new Promise(resolve => {
-        req.check("userId", "userId is missing").exists();
-        req.check("description", "description is missing").exists();
-        req.check("duration", "duration must be numeric").isNumeric();
+        req.check("userId", ValidationErrors.USERID_MISSING).exists();
+        req.check("description", ValidationErrors.DESCRIPTION_MISSING).exists();
+        req.check("duration", ValidationErrors.DURATION_NOT_NUMERIC).isNumeric();
         // @ts-ignore
-        req.check("date", "date must be in YYYY-MM-DD format").optional().custom((value) => {
+        req.check("date", ValidationErrors.DATE_WRONG_FORMAT).optional().custom((value) => {
             return DateTime.fromFormat(value, "yyyy-MM-dd").isValid;
         });
         resolve({req});

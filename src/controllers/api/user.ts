@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import uuidv4 from "uuid/v4";
 
 import User from "../../models/User";
+import { ValidationErrors } from "../common";
 
 /**
  * POST /api/exercise/new-user
@@ -10,7 +11,7 @@ import User from "../../models/User";
 
 export let checkAddUserInputs = (req: Request): Promise<any> => {
     return new Promise(resolve => {
-        req.check("username", "username is missing").exists();
+        req.check("username", ValidationErrors.USERNAME_MISSING).exists();
         resolve({req});
     });
 };

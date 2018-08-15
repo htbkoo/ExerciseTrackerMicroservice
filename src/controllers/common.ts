@@ -28,3 +28,12 @@ export let validateFor = (fn: ValidatorFunction): Controller => {
 
     };
 };
+
+export const ValidationErrors = Object.freeze({
+    USERNAME_DUPLICATED: "'{VALUE}' is already in use, expected it to be unique.",
+    USERNAME_MISSING: "username is missing",
+    USERID_MISSING: "userId is missing",
+    DESCRIPTION_MISSING: "description is missing",
+    DURATION_NOT_NUMERIC: "duration must be numeric",
+    DATE_WRONG_FORMAT: "date must be in YYYY-MM-DD format",
+});

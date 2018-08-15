@@ -1,9 +1,10 @@
 import { prop, Typegoose, plugin } from "typegoose";
 import uniqueValidator from "mongoose-unique-validator";
+import { ValidationErrors } from "../controllers/common";
 
 export type UserId = string;
 
-@plugin(uniqueValidator, { message: "'{VALUE}' is already in use, expected it to be unique." })
+@plugin(uniqueValidator, {message: ValidationErrors.USERNAME_DUPLICATED})
 class UserSchema extends Typegoose {
     @prop({required: true})
     userId: UserId;
