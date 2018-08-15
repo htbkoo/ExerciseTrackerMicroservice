@@ -7,23 +7,20 @@ import User from "../../models/User";
 import logger from "../../util/logger";
 import { ValidationErrors } from "../common";
 
+const DATE_FORMAT = "yyyy-MM-dd";
+
 /*
 * POST /api/exercise/add
 * Add exercise
 * */
 
-export let checkAddExerciseInputs = (req: Request): Promise<any> => {
-    return new Promise(resolve => {
-        req.check("userId", ValidationErrors.USERID_MISSING).exists();
-        req.check("description", ValidationErrors.DESCRIPTION_MISSING).exists();
-        req.check("duration", ValidationErrors.DURATION_NOT_NUMERIC).isNumeric();
-        // @ts-ignore
-        req.check("date", ValidationErrors.DATE_WRONG_FORMAT).optional().custom((value) => {
-            return DateTime.fromFormat(value, "yyyy-MM-dd").isValid;
-        });
-        resolve({req});
-    });
-};
+export let checkAddExerciseInputs = (req: Request): Promise<any> => new Promise(resolve => {
+    req.check("userId", ValidationErrors.USERID_MISSING).exists();
+    req.check("description", ValidationErrors.DESCRIPTION_MISSING).exists();
+    req.check("duration", ValidationErrors.DURATION_NOT_NUMERIC).isNumeric();
+    checkDateFormat(req, "date", DATE_FORMAT);
+    resolve({req});
+});
 
 export let postAddExercise = (req: Request, res: Response, next: NextFunction) => {
     const {userId, description, duration, date} = req.body;
@@ -43,3 +40,10 @@ export let postAddExercise = (req: Request, res: Response, next: NextFunction) =
         })
         .catch(next);
 };
+
+function checkDateFormat(req: Request, fieeld: string, acceptedDateFormat: string) {
+    return req.check(fieeld, ValidationErrors.DATE_WRONG_FORMAT)
+        .optional()
+        // @ts-ignore
+        .custom((value) => DateTime.fromFormat(value, acceptedDateFormat).isValid);
+}
