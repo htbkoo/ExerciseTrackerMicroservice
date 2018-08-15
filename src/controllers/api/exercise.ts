@@ -24,7 +24,7 @@ export let checkAddExerciseInputs = (req: Request): Promise<any> => new Promise(
 
 export let postAddExercise = (req: Request, res: Response, next: NextFunction) => {
     const {userId, description, duration, date} = req.body;
-    const docs = {userId, description, duration, date: !!date ? date : todayInUtc()};
+    const docs = {userId, description, duration, date: firstDefined(date, todayInUtc())};
     const exercise = new Exercise(docs);
     exercise.save()
         .then(() => {
@@ -46,4 +46,8 @@ function checkDateFormat(req: Request, fieeld: string, acceptedDateFormat: strin
         .optional()
         // @ts-ignore
         .custom((value) => DateTime.fromFormat(value, acceptedDateFormat).isValid);
+}
+
+function firstDefined(nullable: any, orElse: any) {
+    return !!nullable ? nullable : orElse;
 }
