@@ -42,10 +42,9 @@ export let postAddExercise = (req: Request, res: Response, next: NextFunction) =
 };
 
 function checkDateFormat(req: Request, fieeld: string, acceptedDateFormat: string) {
-    return req.check(fieeld, ValidationErrors.DATE_WRONG_FORMAT)
-        .optional()
-        // @ts-ignore
-        .custom((value) => DateTime.fromFormat(value, acceptedDateFormat).isValid);
+    return (req.check(fieeld, ValidationErrors.DATE_WRONG_FORMAT)
+        .optional() as any) // TODO: remove the usage of any once typing problem is gone
+        .custom((value: any) => DateTime.fromFormat(value, acceptedDateFormat).isValid);
 }
 
 function firstDefined(nullable: any, orElse: any) {
