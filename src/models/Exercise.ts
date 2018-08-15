@@ -8,7 +8,7 @@ class ExerciseSchema extends Typegoose {
     description: string;
     @prop({required: true})
     duration: number;
-    @prop({})
+    @prop({required: true})
     date?: string;
 }
 
