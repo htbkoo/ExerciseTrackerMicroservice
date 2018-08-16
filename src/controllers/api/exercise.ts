@@ -29,13 +29,18 @@ export let postAddExercise = async (req: Request, res: Response, next: NextFunct
 
     try {
         await exercise.save();
-        const user = await User.findOne({userId}); // TODO: to improve in case user not found
+        const user = await User.findOne({userId});
 
-        logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
-        res.send({
-            username: user.username,
-            ...docs
-        });
+        const isUserExist = user !== null;
+        if (isUserExist) {
+            logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
+            res.send({
+                username: user.username,
+                ...docs
+            });
+        } else {
+            next(new Error(`userId '${userId}' matches no user`));
+        }
     } catch (e) {
         next(e);
     }

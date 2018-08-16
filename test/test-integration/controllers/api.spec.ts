@@ -138,6 +138,17 @@ describe("POST /api/exercise/add", function () {
             .then(assertErrorMessage("date must be in YYYY-MM-DD format"));
     });
 
+    it(`should return 500 INTERNAL_SERVER_ERROR if userId matches no existing user`, function () {
+        // given
+        const params = {userId: "some non-existent Id", duration: 11, description: "another"};
+
+        // when
+        // then
+        return postAddExercise(params)
+            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+            .then(assertErrorMessage("userId &#39;some non-existent Id&#39; matches no user"));
+    });
+
     function postAddExercise(params: object) {
         return postWithData("/api/exercise/add", params);
     }
