@@ -7,12 +7,16 @@ import logger from "../../util/logger";
 
 export let findUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     const {userId} = req.body;
-    const user = await User.findOne({userId});
+    res.locals.user = await User.findOne({userId});
+    next();
+};
 
+export let validateUserExists = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    const {userId} = req.body;
+    const {user} = res.locals;
     const isUserExist = user !== null;
     if (isUserExist) {
         logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
-        res.locals.user = user;
         next();
     } else {
         next(new Error(`userId '${userId}' matches no user`));
