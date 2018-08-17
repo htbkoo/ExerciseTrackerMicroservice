@@ -2,23 +2,24 @@ import { NextFunction, Request, Response } from "express";
 import uuidv4 from "uuid/v4";
 
 import User from "../../models/User";
-import { ValidationErrors } from "../common";
+import { getParam, ValidationErrors } from "../common";
 import logger from "../../util/logger";
 
 export let findUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    const {userId} = req.body;
+    const userId = getParam(req, "userId");
     res.locals.user = await User.findOne({userId});
     next();
 };
 
 export let validateUserExists = (req: Request, res: Response, next: NextFunction) => {
-    const {userId} = req.body;
     const {user} = res.locals;
     const isUserExist = user !== null;
     if (isUserExist) {
+        const {userId} = user;
         logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
         next();
     } else {
+        const userId = getParam(req, "userId");
         next(new Error(`userId '${userId}' matches no user`));
     }
 };

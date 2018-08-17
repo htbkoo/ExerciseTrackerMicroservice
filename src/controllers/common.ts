@@ -29,6 +29,16 @@ export let validateFor = (fn: ValidatorFunction): Controller => {
     };
 };
 
+/**
+ * Returns the value of param name when present,  in the following order: req.params, req.body, req.query
+ * Just to provide a handy fallback method to mimic req.param (https://expressjs.com/en/4x/api.html#req.param)
+ * This is because since express v4.11, req.param() is deprecated
+ * Reference: https://github.com/expressjs/expressjs.com/issues/314
+ */
+export let getParam = (req: Request, key: string, defaultValue?: any): any => {
+    return req.params[key] || req.body[key] || req.query[key] || defaultValue;
+};
+
 export const ValidationErrors = Object.freeze({
     USERNAME_DUPLICATED: "'{VALUE}' is already in use, expected it to be unique.",
     USERNAME_MISSING: "username is missing",
