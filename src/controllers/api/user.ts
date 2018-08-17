@@ -3,6 +3,21 @@ import uuidv4 from "uuid/v4";
 
 import User from "../../models/User";
 import { ValidationErrors } from "../common";
+import logger from "../../util/logger";
+
+export let findUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    const {userId} = req.body;
+    const user = await User.findOne({userId});
+
+    const isUserExist = user !== null;
+    if (isUserExist) {
+        logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
+        res.locals.user = user;
+        next();
+    } else {
+        next(new Error(`userId '${userId}' matches no user`));
+    }
+};
 
 /**
  * POST /api/exercise/new-user

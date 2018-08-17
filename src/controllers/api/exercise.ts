@@ -3,7 +3,6 @@ import { DateTime } from "luxon";
 
 import { todayInUtc } from "../../services/datetime/datetimeService";
 import Exercise from "../../models/Exercise";
-import User from "../../models/User";
 import logger from "../../util/logger";
 import { ValidationErrors } from "../common";
 
@@ -23,25 +22,18 @@ export let checkAddExerciseInputs = async (req: Request): Promise<any> => new Pr
 });
 
 export let postAddExercise = async (req: Request, res: Response, next: NextFunction) => {
-    const {userId, description, duration, date} = req.body;
-    const docs = {userId, description, duration, date: firstDefined(date, todayInUtc())};
-    const exercise = new Exercise(docs);
-
     try {
-        const user = await User.findOne({userId});
-
-        const isUserExist = user !== null;
-        if (isUserExist) {
-            logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
-            await exercise.save();
-            res.send({
-                username: user.username,
-                ...docs
-            });
-        } else {
-            next(new Error(`userId '${userId}' matches no user`));
-        }
+        const user = res.locals.user;
+        const {description, duration, date} = req.body;
+        const docs = {userId: user.userId, description, duration, date: firstDefined(date, todayInUtc())};
+        const exercise = new Exercise(docs);
+        await exercise.save();
+        res.send({
+            username: user.username,
+            ...docs
+        });
     } catch (e) {
+        logger.warn(`Error caught: ${e.toString()}`);
         next(e);
     }
 };
