@@ -11,7 +11,7 @@ export let findUser = async (req: Request, res: Response, next: NextFunction): P
     next();
 };
 
-export let validateUserExists = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+export let validateUserExists = (req: Request, res: Response, next: NextFunction) => {
     const {userId} = req.body;
     const {user} = res.locals;
     const isUserExist = user !== null;
