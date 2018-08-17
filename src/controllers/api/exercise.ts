@@ -28,12 +28,12 @@ export let postAddExercise = async (req: Request, res: Response, next: NextFunct
     const exercise = new Exercise(docs);
 
     try {
-        await exercise.save();
         const user = await User.findOne({userId});
 
         const isUserExist = user !== null;
         if (isUserExist) {
             logger.debug(`Corresponding user with id=${userId} is ${user.toString()}`);
+            await exercise.save();
             res.send({
                 username: user.username,
                 ...docs

@@ -4,6 +4,7 @@ import HttpStatus from "http-status";
 import app from "../../../src/app";
 import User from "../../../src/models/User";
 import * as datetimeService from "../../../src/services/datetime/datetimeService";
+import Exercise from "../../../src/models/Exercise";
 
 const mockUuid = require("../../../__mocks__/uuid/v4").mockUuidV4;
 
@@ -146,7 +147,9 @@ describe("POST /api/exercise/add", function () {
         // then
         return postAddExercise(params)
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(assertErrorMessage("userId &#39;some non-existent Id&#39; matches no user"));
+            .then(assertErrorMessage("userId &#39;some non-existent Id&#39; matches no user"))
+            .then(() => Exercise.find({userId: "some non-existent Id"}))
+            .then(exercises => expect(exercises.length).toEqual(0));
     });
 
     function postAddExercise(params: object) {
