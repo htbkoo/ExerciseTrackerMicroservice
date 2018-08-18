@@ -1,6 +1,6 @@
 "use strict";
 
-import { NextFunction, Request, Response, RequestHandler } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { DateTime } from "luxon";
 
 import logger from "../util/logger";
