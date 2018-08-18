@@ -50,6 +50,7 @@ export let checkGetExercisesInputs = (req: Request): Promise<any> => new Promise
     req.check("userId", ValidationErrors.USERID_MISSING).exists();
     req.check("limit", ValidationErrors.LIMIT_NOT_NUMERIC).optional().isNumeric();
     checkDateFormat(req, "from", DATE_FORMAT);
+    checkDateFormat(req, "to", DATE_FORMAT);
     resolve({req});
 });
 
