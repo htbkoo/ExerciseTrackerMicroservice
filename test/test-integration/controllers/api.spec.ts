@@ -183,10 +183,24 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
                 {duration: 2, description: "another", date: "Sun, Jan 01, 2017"},
             ]
         };
-        return supertest(app)
-            .get(`/api/exercise/log?userId=${userId}`)
+        return getExerciseLog(`?userId=${userId}`)
             .expect(HttpStatus.OK, expectedResponse);
     });
+
+    it(`should return 500 INTERNAL_SERVER_ERROR if userId is missing in request`, function () {
+        return getExerciseLog("")
+            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+            .then(assertErrorMessage("userId is missing"));
+    });
+
+    function getExerciseLog(param: string) {
+        return supertest(app)
+            .get(`/api/exercise/log${param}`);
+    }
+
+    function assertErrorMessage(expected: string) {
+        return errorAssertion("cannot GET /api/exercise/log (500)", expected);
+    }
 });
 
 function postWithData(url: string, params: object): supertest.Test {
