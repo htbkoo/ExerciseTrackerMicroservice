@@ -10,17 +10,22 @@ export type ValidatorFunction = (req: Request, res: Response) => Promise<any>;
 /**
  * validation common middleware wrapper
  */
-export let validateFor = (fn: ValidatorFunction): RequestHandler =>
+export let validateFor = (validate: ValidatorFunction): RequestHandler =>
     (req: Request, res: Response, next: NextFunction): any =>
-        fn(req, res).then(({req}) => {
+        validate(req, res).then(({req}) => {
                 const errors = req.validationErrors();
                 if (errors) {
+                    handleError();
+                } else {
+                    next();
+                }
+
+                function handleError(): void {
                     const e = JSON.stringify(errors);
                     logger.debug(`validation error: ${e}`);
                     req.flash("errors", errors);
-                    return next(e);
+                    next(e);
                 }
-                next();
             }
         );
 
