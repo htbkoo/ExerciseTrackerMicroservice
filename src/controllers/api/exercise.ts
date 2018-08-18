@@ -5,6 +5,7 @@ import { todayInUtc } from "../../services/datetime/datetimeService";
 import Exercise from "../../models/Exercise";
 import logger from "../../util/logger";
 import { ValidationErrors } from "../common";
+import { firstDefined } from "../../util/objUtils";
 
 const DATE_FORMAT = "yyyy-MM-dd";
 
@@ -71,10 +72,6 @@ function checkDateFormat(req: Request, fieeld: string, acceptedDateFormat: strin
     return (req.check(fieeld, ValidationErrors.DATE_WRONG_FORMAT)
         .optional() as any) // TODO: remove the usage of any once typing problem is gone
         .custom((value: any) => DateTime.fromFormat(value, acceptedDateFormat).isValid);
-}
-
-function firstDefined(nullable: any, orElse: any) {
-    return !!nullable ? nullable : orElse;
 }
 
 type ResponseLog = { duration: number, description: string, date: string };
