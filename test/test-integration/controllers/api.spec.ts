@@ -190,7 +190,13 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
     it(`should return 500 INTERNAL_SERVER_ERROR if userId is missing in request`, function () {
         return getExerciseLog("")
             .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(assertErrorMessage("userId is missing"));
+            .then(errorAssertion("cannot GET /api/exercise/log (500)", "userId is missing"));
+    });
+
+    it(`should return 500 INTERNAL_SERVER_ERROR if limit (when provided) is not numeric`, function () {
+        return getExerciseLog(`?${convertToPostData({userId: "a", limit: "not numeric"})}`)
+            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+            .then(errorAssertion("cannot GET /api/exercise/log?userId=a&limit=not%20numeric (500)", "limit must be numeric"));
     });
 
     function getExerciseLog(param: string) {
@@ -198,9 +204,6 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
             .get(`/api/exercise/log${param}`);
     }
 
-    function assertErrorMessage(expected: string) {
-        return errorAssertion("cannot GET /api/exercise/log (500)", expected);
-    }
 });
 
 function postWithData(url: string, params: object): supertest.Test {
