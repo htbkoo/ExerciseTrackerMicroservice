@@ -187,23 +187,31 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
             .expect(HttpStatus.OK, expectedResponse);
     });
 
-    it(`should return 500 INTERNAL_SERVER_ERROR if userId is missing in request`, function () {
-        return getExerciseLog("")
-            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(errorAssertion("cannot GET /api/exercise/log (500)", "userId is missing"));
-    });
-
-    it(`should return 500 INTERNAL_SERVER_ERROR if limit (when provided) is not numeric`, function () {
-        return getExerciseLog(`?${convertToPostData({userId: "a", limit: "not numeric"})}`)
-            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(errorAssertion("cannot GET /api/exercise/log?userId=a&limit=not%20numeric (500)", "limit must be numeric"));
-    });
+    [
+        {
+            testCase: "userId is missing in request",
+            param: "",
+            error: "cannot GET /api/exercise/log (500)",
+            message: "userId is missing"
+        },
+        {
+            testCase: "limit (when provided) is not numeric",
+            param: `?${convertToPostData({userId: "a", limit: "not numeric"})}`,
+            error: "cannot GET /api/exercise/log?userId=a&limit=not%20numeric (500)",
+            message: "limit must be numeric"
+        },
+    ].forEach(({testCase, param, error, message}) =>
+        it(`should return 500 INTERNAL_SERVER_ERROR if ${testCase}`, function () {
+            return getExerciseLog(param)
+                .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+                .then(errorAssertion(error, message));
+        })
+    );
 
     function getExerciseLog(param: string) {
         return supertest(app)
             .get(`/api/exercise/log${param}`);
     }
-
 });
 
 function postWithData(url: string, params: object): supertest.Test {
