@@ -38,6 +38,35 @@ export let postAddExercise = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+/*
+* GET /api/exercise/log?{userId}[&from][&to][&limit]
+* GET users's exercise log
+* { } = required, [ ] = optional
+* from, to = dates (yyyy-mm-dd); limit = number
+* */
+
+export let getExercises = async (req: Request, res: Response, next: NextFunction) => {
+    const {userId, limit, from, to} = req.query;
+    try {
+        const {username} = res.locals.user;
+
+        await Exercise.find({userId})
+            .select("duration description date")
+            .exec()
+            .then(exercises => {
+                const results = {
+                    userId,
+                    username,
+                    count: exercises.length,
+                    log: exercises.map(toResponseLog)
+                };
+                res.send(results);
+            });
+    } catch (e) {
+        next(e);
+    }
+};
+
 function checkDateFormat(req: Request, fieeld: string, acceptedDateFormat: string) {
     return (req.check(fieeld, ValidationErrors.DATE_WRONG_FORMAT)
         .optional() as any) // TODO: remove the usage of any once typing problem is gone
@@ -46,4 +75,16 @@ function checkDateFormat(req: Request, fieeld: string, acceptedDateFormat: strin
 
 function firstDefined(nullable: any, orElse: any) {
     return !!nullable ? nullable : orElse;
+}
+
+type ResponseLog = { duration: number, description: string, date: string };
+
+function toResponseLog(exercise: any): ResponseLog {
+    const {duration, description, date} = exercise._doc;
+    return {duration, description, date: formatDate(date)};
+}
+
+function formatDate(date: string) {
+    return DateTime.fromFormat(date, DATE_FORMAT)
+        .toLocaleString({weekday: "short", month: "short", day: "2-digit", year: "numeric"});
 }

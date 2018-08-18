@@ -17,8 +17,8 @@ import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 import * as homeController from "./controllers/home";
 import { getApi } from "./controllers/api/api";
 import { validateFor } from "./controllers/common";
-import { checkAddExerciseInputs, postAddExercise } from "./controllers/api/exercise";
-import { checkAddUserInputs, findUser, postAddUser, validateUserExists } from "./controllers/api/user";
+import { checkAddExerciseInputs, getExercises, postAddExercise } from "./controllers/api/exercise";
+import { checkAddUserInputs, findUser, postAddUser, validateUserExists  } from "./controllers/api/user";
 
 logger.info("Start setting up app.");
 
@@ -70,5 +70,6 @@ app.get("/", homeController.index);
 app.get("/api", getApi);
 app.post("/api/exercise/new-user", validateFor(checkAddUserInputs), postAddUser);
 app.post("/api/exercise/add", validateFor(checkAddExerciseInputs), findUser, validateUserExists, postAddExercise);
+app.get("/api/exercise/log", findUser, validateUserExists, getExercises);
 
 export default app;

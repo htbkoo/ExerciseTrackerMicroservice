@@ -161,6 +161,34 @@ describe("POST /api/exercise/add", function () {
     }
 });
 
+describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
+    it(`should return 200 OK if exercises are retrieved successfully`, async function () {
+        // given
+        const userId = "someUserId", username = "someName";
+
+        await new User({userId, username}).save();
+        await [
+            {userId, duration: 1, description: "any", date: "2018-08-15"},
+            {userId, duration: 2, description: "another", date: "2017-01-01"},
+        ].forEach(async doc => await new Exercise(doc).save());
+
+        // when
+        // then
+        const expectedResponse = {
+            userId,
+            username,
+            count: 2,
+            log: [
+                {duration: 1, description: "any", date: "Wed, Aug 15, 2018"},
+                {duration: 2, description: "another", date: "Sun, Jan 01, 2017"},
+            ]
+        };
+        return supertest(app)
+            .get(`/api/exercise/log?userId=${userId}`)
+            .expect(HttpStatus.OK, expectedResponse);
+    });
+});
+
 function postWithData(url: string, params: object): supertest.Test {
     const data: string = convertToPostData(params);
     return supertest(app)

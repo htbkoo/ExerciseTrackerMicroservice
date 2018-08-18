@@ -45,5 +45,6 @@ export const ValidationErrors = Object.freeze({
     USERID_MISSING: "userId is missing",
     DESCRIPTION_MISSING: "description is missing",
     DURATION_NOT_NUMERIC: "duration must be numeric",
+    LIMIT_NOT_NUMERIC: "limit must be numeric",
     DATE_WRONG_FORMAT: "date must be in YYYY-MM-DD format",
 });
