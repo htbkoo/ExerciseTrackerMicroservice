@@ -170,7 +170,7 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
         await [
             {userId, duration: 1, description: "any", date: "2018-08-15"},
             {userId, duration: 2, description: "another", date: "2017-01-01"},
-        ].forEach(async doc => await new Exercise(doc).save());
+        ].forEach(addExercise);
 
         // when
         // then
@@ -219,6 +219,10 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
                 .then(errorAssertion(error, message));
         })
     );
+
+    async function addExercise(doc: any) {
+        return await new Exercise(doc).save();
+    }
 
     function getExerciseLog(param: string) {
         return supertest(app)
