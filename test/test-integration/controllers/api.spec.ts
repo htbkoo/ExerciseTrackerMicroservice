@@ -200,6 +200,12 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
             error: "cannot GET /api/exercise/log?userId=a&limit=not%20numeric (500)",
             message: "limit must be numeric"
         },
+        {
+            testCase: "from (when provided) is not in YYYY-MM-DD format",
+            param: `?${convertToPostData({userId: "a", from: "18-Aug-2018"})}`,
+            error: "cannot GET /api/exercise/log?userId=a&from=18-Aug-2018 (500)",
+            message: "date must be in YYYY-MM-DD format"
+        },
     ].forEach(({testCase, param, error, message}) =>
         it(`should return 500 INTERNAL_SERVER_ERROR if ${testCase}`, function () {
             return getExerciseLog(param)

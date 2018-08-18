@@ -49,6 +49,7 @@ export let postAddExercise = async (req: Request, res: Response, next: NextFunct
 export let checkGetExercisesInputs = (req: Request): Promise<any> => new Promise(resolve => {
     req.check("userId", ValidationErrors.USERID_MISSING).exists();
     req.check("limit", ValidationErrors.LIMIT_NOT_NUMERIC).optional().isNumeric();
+    checkDateFormat(req, "from", DATE_FORMAT);
     resolve({req});
 });
 
