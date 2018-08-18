@@ -1,0 +1,1 @@
+export const enableTimestamps = {schemaOptions: {timestamps: true}};

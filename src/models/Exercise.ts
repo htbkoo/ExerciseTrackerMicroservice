@@ -1,5 +1,6 @@
 import { prop, Typegoose } from "typegoose";
 import { UserId } from "./User";
+import { enableTimestamps } from "./constants";
 
 class ExerciseSchema extends Typegoose {
     @prop({required: true})
@@ -12,5 +13,5 @@ class ExerciseSchema extends Typegoose {
     date?: string;
 }
 
-export const Exercise = new ExerciseSchema().getModelForClass(ExerciseSchema);
+export const Exercise = new ExerciseSchema().getModelForClass(ExerciseSchema, enableTimestamps);
 export default Exercise;

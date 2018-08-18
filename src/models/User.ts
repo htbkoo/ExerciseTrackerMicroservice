@@ -1,6 +1,7 @@
 import { prop, Typegoose, plugin } from "typegoose";
 import uniqueValidator from "mongoose-unique-validator";
 import { ValidationErrors } from "../controllers/common";
+import { enableTimestamps } from "./constants";
 
 export type UserId = string;
 
@@ -12,5 +13,5 @@ class UserSchema extends Typegoose {
     username: string;
 }
 
-export const User = new UserSchema().getModelForClass(UserSchema);
+export const User = new UserSchema().getModelForClass(UserSchema, enableTimestamps);
 export default User;
