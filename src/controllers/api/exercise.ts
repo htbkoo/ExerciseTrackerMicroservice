@@ -81,7 +81,7 @@ function toResponseLog(exercise: any): ResponseLog {
     return {duration, description, date: formatDate(date)};
 }
 
-function formatDate(date: string) {
+function formatDate(date: string): string {
     return DateTime.fromFormat(date, DATE_FORMAT)
         .toLocaleString({weekday: "short", month: "short", day: "2-digit", year: "numeric"});
 }
