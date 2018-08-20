@@ -162,6 +162,8 @@ describe("POST /api/exercise/add", function () {
 });
 
 describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
+    const SMALL_PAUSE = 50;
+
     describe("successful cases", function () {
         jest.setTimeout(10000);
 
@@ -254,13 +256,13 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
     });
 
     function addExercises(exercises: any[]): Promise<void> {
-        return exercises.reduce((promise, doc) => promise.then(() => addExercise(doc)), Promise.resolve());
+        return exercises.reduce(async (promise, doc) => await addExercise(doc), Promise.resolve());
     }
 
     async function addExercise(doc: any) {
-        console.debug("before");
-        await new Promise(resolve => setTimeout(resolve, 50));
-        console.debug("resolved");
+        console.debug("before pause");
+        await new Promise(resolve => setTimeout(resolve, SMALL_PAUSE));
+        console.debug("resolved pause");
         return await new Exercise(doc).save().then(d => console.debug(`saved doc: ${JSON.stringify(d)}`));
     }
 
