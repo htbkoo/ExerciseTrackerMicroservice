@@ -60,7 +60,8 @@ export let getExercises = async (req: Request, res: Response, next: NextFunction
         const {username} = res.locals.user;
 
         await Exercise.find({userId})
-            .select("duration description date")
+            .sort("-updatedAt")
+            .limit(parseInt(limit))
             .exec()
             .then(exercises => {
                 const results = {

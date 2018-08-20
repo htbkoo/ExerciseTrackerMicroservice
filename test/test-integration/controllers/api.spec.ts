@@ -162,66 +162,106 @@ describe("POST /api/exercise/add", function () {
 });
 
 describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
-    it(`should return 200 OK if exercises are retrieved successfully`, async function () {
-        // given
-        const userId = "someUserId", username = "someName";
+    describe("successful cases", function () {
+        jest.setTimeout(10000);
 
-        await new User({userId, username}).save();
-        await [
-            {userId, duration: 1, description: "any", date: "2018-08-15"},
-            {userId, duration: 2, description: "another", date: "2017-01-01"},
-        ].forEach(addExercise);
+        it(`should return 200 OK if exercises are retrieved (shown in reversed insertion order) successfully`, async function () {
+            // given
+            const userId = "userId1", username = "someName1";
 
-        // when
-        // then
-        const expectedResponse = {
-            userId,
-            username,
-            count: 2,
-            log: [
-                {duration: 1, description: "any", date: "Wed, Aug 15, 2018"},
-                {duration: 2, description: "another", date: "Sun, Jan 01, 2017"},
-            ]
-        };
-        return getExerciseLog(`?userId=${userId}`)
-            .expect(HttpStatus.OK, expectedResponse);
+            await new User({userId, username}).save();
+
+            await addExercises([
+                {userId, duration: 1, description: "any", date: "2018-08-15"},
+                {userId, duration: 2, description: "2nd", date: "2017-01-01"}
+            ]);
+
+            // when
+            // then
+            const expectedResponse = {
+                userId,
+                username,
+                count: 2,
+                log: [
+                    {duration: 2, description: "2nd", date: "Sun, Jan 01, 2017"},
+                    {duration: 1, description: "any", date: "Wed, Aug 15, 2018"},
+                ]
+            };
+            return getExerciseLog(`?userId=${userId}`)
+                .expect(HttpStatus.OK, expectedResponse);
+        });
+
+        it(`should return 200 OK and show the latest log only when limited by 1`, async function () {
+            // given
+            const userId = "userId2", username = "someName2";
+
+            await new User({userId, username}).save();
+
+            await addExercises([
+                {userId, duration: 1, description: "any", date: "2018-08-15"},
+                {userId, duration: 2, description: "2nd", date: "2018-01-01"},
+                {userId, duration: 4, description: "four", date: "2018-01-04"},
+            ]);
+
+            // when
+            // then
+            const expectedResponse = {
+                userId,
+                username,
+                count: 1,
+                log: [
+                    {duration: 4, description: "four", date: "Thu, Jan 04, 2018"},
+                ]
+            };
+            return getExerciseLog(`?${convertToPostData({userId, limit: 1})}`)
+                .expect(HttpStatus.OK, expectedResponse);
+        });
     });
 
-    [
-        {
-            testCase: "userId is missing in request",
-            param: "",
-            error: "cannot GET /api/exercise/log (500)",
-            message: "userId is missing"
-        },
-        {
-            testCase: "limit (when provided) is not numeric",
-            param: `?${convertToPostData({userId: "a", limit: "not numeric"})}`,
-            error: "cannot GET /api/exercise/log?userId=a&limit=not%20numeric (500)",
-            message: "limit must be numeric"
-        },
-        {
-            testCase: "from (when provided) is not in YYYY-MM-DD format",
-            param: `?${convertToPostData({userId: "a", from: "18-Aug-2018"})}`,
-            error: "cannot GET /api/exercise/log?userId=a&from=18-Aug-2018 (500)",
-            message: "date must be in YYYY-MM-DD format"
-        },
-        {
-            testCase: "to (when provided) is not in YYYY-MM-DD format",
-            param: `?${convertToPostData({userId: "a", to: "18-Aug-2018"})}`,
-            error: "cannot GET /api/exercise/log?userId=a&to=18-Aug-2018 (500)",
-            message: "date must be in YYYY-MM-DD format"
-        },
-    ].forEach(({testCase, param, error, message}) =>
-        it(`should return 500 INTERNAL_SERVER_ERROR if ${testCase}`, function () {
-            return getExerciseLog(param)
-                .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-                .then(errorAssertion(error, message));
-        })
-    );
+    describe("failed cases", function () {
+        [
+            {
+                testCase: "userId is missing in request",
+                param: "",
+                error: "cannot GET /api/exercise/log (500)",
+                message: "userId is missing"
+            },
+            {
+                testCase: "limit (when provided) is not numeric",
+                param: `?${convertToPostData({userId: "a", limit: "not numeric"})}`,
+                error: "cannot GET /api/exercise/log?userId=a&limit=not%20numeric (500)",
+                message: "limit must be numeric"
+            },
+            {
+                testCase: "from (when provided) is not in YYYY-MM-DD format",
+                param: `?${convertToPostData({userId: "a", from: "18-Aug-2018"})}`,
+                error: "cannot GET /api/exercise/log?userId=a&from=18-Aug-2018 (500)",
+                message: "date must be in YYYY-MM-DD format"
+            },
+            {
+                testCase: "to (when provided) is not in YYYY-MM-DD format",
+                param: `?${convertToPostData({userId: "a", to: "18-Aug-2018"})}`,
+                error: "cannot GET /api/exercise/log?userId=a&to=18-Aug-2018 (500)",
+                message: "date must be in YYYY-MM-DD format"
+            },
+        ].forEach(({testCase, param, error, message}) =>
+            it(`should return 500 INTERNAL_SERVER_ERROR if ${testCase}`, function () {
+                return getExerciseLog(param)
+                    .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .then(errorAssertion(error, message));
+            })
+        );
+    });
+
+    function addExercises(exercises: any[]): Promise<void> {
+        return exercises.reduce((promise, doc) => promise.then(() => addExercise(doc)), Promise.resolve());
+    }
 
     async function addExercise(doc: any) {
-        return await new Exercise(doc).save();
+        console.debug("before");
+        await new Promise(resolve => setTimeout(resolve, 50));
+        console.debug("resolved");
+        return await new Exercise(doc).save().then(d => console.debug(`saved doc: ${JSON.stringify(d)}`));
     }
 
     function getExerciseLog(param: string) {
