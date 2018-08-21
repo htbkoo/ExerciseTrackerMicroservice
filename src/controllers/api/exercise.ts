@@ -62,15 +62,14 @@ export let getExercises = async (req: Request, res: Response, next: NextFunction
         await createQuery()
             .sort("-updatedAt")
             .exec()
-            .then(exercises => {
-                const results = {
+            .then(exercises =>
+                res.send({
                     userId,
                     username,
                     count: exercises.length,
                     log: exercises.map(toResponseLog)
-                };
-                res.send(results);
-            });
+                })
+            );
     } catch (e) {
         next(e);
     }
