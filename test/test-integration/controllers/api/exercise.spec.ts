@@ -163,24 +163,25 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
                 .expect(HttpStatus.OK, expectedResponse);
         });
 
-        it(`should return 200 OK and show the matched logs only when limited by from`, async function () {
-            const expectedCount = 2;
-            const expectedLog = [
-                logs.fourth,
-                logs.first,
-            ];
-            const expectedResponse = {
-                userId,
-                username,
-                count: expectedCount,
-                log: expectedLog
-            };
-            const otherParams = {
-                from: "2018-01-04"
-            };
-            return getExerciseLog(`?${convertToPostData({userId, ...otherParams})}`)
-                .expect(HttpStatus.OK, expectedResponse);
-        });
+        [
+            {
+                testCase: "limited by from (exact date)",
+                expectedCount: 2,
+                expectedLog: [logs.fourth, logs.first],
+                otherParams: {from: "2018-01-04"}
+            }
+        ].forEach(({testCase, expectedCount, expectedLog, otherParams}) =>
+            it(`should return 200 OK and show the matched logs only when ${testCase}`, async function () {
+                const expectedResponse = {
+                    userId,
+                    username,
+                    count: expectedCount,
+                    log: expectedLog
+                };
+                return getExerciseLog(`?${convertToPostData({userId, ...otherParams})}`)
+                    .expect(HttpStatus.OK, expectedResponse);
+            })
+        );
     });
 
     describe("failed cases", function () {
