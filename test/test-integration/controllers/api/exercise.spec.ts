@@ -106,29 +106,32 @@ describe("POST /api/exercise/add", function () {
 });
 
 describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
+    // TODO: improve how we get userId/username (e.g. delegate to factory) to avoid conflicting with other tests
+    const userId = "userId1", username = "someName1";
     const SMALL_PAUSE = 50;
+    jest.setTimeout(10000);
+
+    beforeAll(async function () {
+        await new User({userId, username}).save();
+        await addExercises([
+            {userId, duration: 1, description: "any", date: "2018-08-15"},
+            {userId, duration: 2, description: "2nd", date: "2017-01-01"},
+            {userId, duration: 4, description: "four", date: "2018-01-04"},
+        ]);
+    });
+    afterAll(async function () {
+        await User.findOneAndRemove({username});
+        await Exercise.find({userId}).remove().exec();
+    });
 
     describe("successful cases", function () {
-        jest.setTimeout(10000);
-
         it(`should return 200 OK if exercises are retrieved (shown in reversed insertion order) successfully`, async function () {
-            // given
-            const userId = "userId1", username = "someName1";
-
-            await new User({userId, username}).save();
-
-            await addExercises([
-                {userId, duration: 1, description: "any", date: "2018-08-15"},
-                {userId, duration: 2, description: "2nd", date: "2017-01-01"}
-            ]);
-
-            // when
-            // then
             const expectedResponse = {
                 userId,
                 username,
-                count: 2,
+                count: 3,
                 log: [
+                    {duration: 4, description: "four", date: "Thu, Jan 04, 2018"},
                     {duration: 2, description: "2nd", date: "Sun, Jan 01, 2017"},
                     {duration: 1, description: "any", date: "Wed, Aug 15, 2018"},
                 ]
@@ -138,19 +141,6 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
         });
 
         it(`should return 200 OK and show the latest log only when limited by 1`, async function () {
-            // given
-            const userId = "userId2", username = "someName2";
-
-            await new User({userId, username}).save();
-
-            await addExercises([
-                {userId, duration: 1, description: "any", date: "2018-08-15"},
-                {userId, duration: 2, description: "2nd", date: "2018-01-01"},
-                {userId, duration: 4, description: "four", date: "2018-01-04"},
-            ]);
-
-            // when
-            // then
             const expectedResponse = {
                 userId,
                 username,
