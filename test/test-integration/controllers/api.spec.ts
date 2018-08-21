@@ -256,13 +256,20 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
     });
 
     function addExercises(exercises: any[]): Promise<void> {
-        return exercises.reduce((promise, doc) => promise.then(() => addExercise(doc)), Promise.resolve());
+        return exercises.reduce((promise, doc) => promise.then(async () => {
+            await pause(SMALL_PAUSE);
+            await addExercise(doc);
+        }), Promise.resolve());
+    }
+
+    async function pause(timeout: number) {
+        console.debug("before pause");
+        await new Promise(resolve => setTimeout(resolve, timeout));
+        console.debug("resolved pause");
+        return;
     }
 
     async function addExercise(doc: any) {
-        console.debug("before pause");
-        await new Promise(resolve => setTimeout(resolve, SMALL_PAUSE));
-        console.debug("resolved pause");
         return await new Exercise(doc).save().then(d => console.debug(`saved doc: ${JSON.stringify(d)}`));
     }
 
