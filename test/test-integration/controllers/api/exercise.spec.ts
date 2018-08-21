@@ -169,7 +169,13 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
                 expectedCount: 2,
                 expectedLog: [logs.fourth, logs.first],
                 otherParams: {from: "2018-01-04"}
-            }
+            },
+            {
+                testCase: "limited by to (exact date)",
+                expectedCount: 2,
+                expectedLog: [logs.fourth, logs.second],
+                otherParams: {to: "2018-01-04"}
+            },
         ].forEach(({testCase, expectedCount, expectedLog, otherParams}) =>
             it(`should return 200 OK and show the matched logs only when ${testCase}`, async function () {
                 const expectedResponse = {

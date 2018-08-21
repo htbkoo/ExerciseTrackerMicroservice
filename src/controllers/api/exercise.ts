@@ -79,6 +79,9 @@ export let getExercises = async (req: Request, res: Response, next: NextFunction
         if (from) {
             query = query.where("date").gte(from);
         }
+        if (to) {
+            query = query.where("date").lte(to);
+        }
         if (limit) {
             query = query.limit(parseInt(limit));
         }
