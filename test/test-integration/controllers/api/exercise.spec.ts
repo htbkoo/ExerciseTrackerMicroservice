@@ -109,14 +109,19 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
     // TODO: improve how we get userId/username (e.g. delegate to factory) to avoid conflicting with other tests
     const userId = "userId1", username = "someName1";
     const SMALL_PAUSE = 50;
+    const exercises = {
+        first: {userId, duration: 1, description: "any", date: "2018-08-15"},
+        second: {userId, duration: 2, description: "2nd", date: "2017-01-01"},
+        fourth: {userId, duration: 4, description: "four", date: "2018-01-04"},
+    };
     jest.setTimeout(10000);
 
     beforeAll(async function () {
         await new User({userId, username}).save();
         await addExercises([
-            {userId, duration: 1, description: "any", date: "2018-08-15"},
-            {userId, duration: 2, description: "2nd", date: "2017-01-01"},
-            {userId, duration: 4, description: "four", date: "2018-01-04"},
+            exercises.first,
+            exercises.second,
+            exercises.fourth,
         ]);
     });
     afterAll(async function () {
