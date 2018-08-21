@@ -256,7 +256,7 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
     });
 
     function addExercises(exercises: any[]): Promise<void> {
-        return exercises.reduce(async (promise, doc) => await addExercise(doc), Promise.resolve());
+        return exercises.reduce((promise, doc) => promise.then(() => addExercise(doc)), Promise.resolve());
     }
 
     async function addExercise(doc: any) {
