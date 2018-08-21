@@ -176,6 +176,18 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
                 expectedLog: [logs.fourth, logs.second],
                 otherParams: {to: "2018-01-04"}
             },
+            {
+                testCase: "limited by both from and to (exact date)",
+                expectedCount: 1,
+                expectedLog: [logs.second],
+                otherParams: {from: "2017-01-01", to: "2017-01-01"}
+            },
+            {
+                testCase: "limited by both from and to (not exact date)",
+                expectedCount: 3,
+                expectedLog: [logs.fourth, logs.second, logs.first],
+                otherParams: {from: "2012-01-04", to: "2028-01-04"}
+            },
         ].forEach(({testCase, expectedCount, expectedLog, otherParams}) =>
             it(`should return 200 OK and show the matched logs only when ${testCase}`, async function () {
                 const expectedResponse = {
