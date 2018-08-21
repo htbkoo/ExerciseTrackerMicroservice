@@ -266,11 +266,11 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
         console.debug("before pause");
         await new Promise(resolve => setTimeout(resolve, timeout));
         console.debug("resolved pause");
-        return;
     }
 
     async function addExercise(doc: any) {
-        return await new Exercise(doc).save().then(d => console.debug(`saved doc: ${JSON.stringify(d)}`));
+        const result = await new Exercise(doc).save();
+        console.debug(`saved doc: ${JSON.stringify(result)}`);
     }
 
     function getExerciseLog(param: string) {
