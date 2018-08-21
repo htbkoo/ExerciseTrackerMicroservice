@@ -56,18 +56,11 @@ export let checkGetExercisesInputs = (req: Request): Promise<any> => new Promise
 
 export let getExercises = async (req: Request, res: Response, next: NextFunction) => {
     const {userId, limit, from, to} = req.query;
+
     try {
         const {username} = res.locals.user;
-
-        let query = Exercise.find({userId});
-
-        if (from) {
-            query = query.where("date").gte(from);
-        }
-
-        await query
+        await createQuery()
             .sort("-updatedAt")
-            .limit(parseInt(limit))
             .exec()
             .then(exercises => {
                 const results = {
@@ -80,6 +73,17 @@ export let getExercises = async (req: Request, res: Response, next: NextFunction
             });
     } catch (e) {
         next(e);
+    }
+
+    function createQuery() {
+        let query = Exercise.find({userId});
+        if (from) {
+            query = query.where("date").gte(from);
+        }
+        if (limit) {
+            query = query.limit(parseInt(limit));
+        }
+        return query;
     }
 };
 
