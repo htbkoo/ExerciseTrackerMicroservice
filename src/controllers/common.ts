@@ -48,3 +48,5 @@ export const ValidationErrors = Object.freeze({
     LIMIT_NOT_NUMERIC: "limit must be numeric",
     DATE_WRONG_FORMAT: "date must be in YYYY-MM-DD format",
 });
+
+export type valueof<T> = T[keyof T]; // reference: https://stackoverflow.com/a/49547901
