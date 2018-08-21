@@ -114,6 +114,11 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
         second: {userId, duration: 2, description: "2nd", date: "2017-01-01"},
         fourth: {userId, duration: 4, description: "four", date: "2018-01-04"},
     };
+    const logs = {
+        first: {duration: 1, description: "any", date: "Wed, Aug 15, 2018"},
+        second: {duration: 2, description: "2nd", date: "Sun, Jan 01, 2017"},
+        fourth: {duration: 4, description: "four", date: "Thu, Jan 04, 2018"},
+    };
     jest.setTimeout(10000);
 
     beforeAll(async function () {
@@ -155,6 +160,25 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
                 ]
             };
             return getExerciseLog(`?${convertToPostData({userId, limit: 1})}`)
+                .expect(HttpStatus.OK, expectedResponse);
+        });
+
+        it(`should return 200 OK and show the matched logs only when limited by from`, async function () {
+            const expectedCount = 2;
+            const expectedLog = [
+                logs.fourth,
+                logs.first,
+            ];
+            const expectedResponse = {
+                userId,
+                username,
+                count: expectedCount,
+                log: expectedLog
+            };
+            const otherParams = {
+                from: "2018-01-04"
+            };
+            return getExerciseLog(`?${convertToPostData({userId, ...otherParams})}`)
                 .expect(HttpStatus.OK, expectedResponse);
         });
     });

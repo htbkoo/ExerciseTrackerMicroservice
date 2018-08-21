@@ -6,6 +6,7 @@ import Exercise from "../../models/Exercise";
 import logger from "../../util/logger";
 import { ValidationErrors } from "../common";
 import { firstDefined } from "../../util/objUtils";
+import { UserId } from "../../models/User";
 
 const DATE_FORMAT = "yyyy-MM-dd";
 
@@ -54,12 +55,14 @@ export let checkGetExercisesInputs = (req: Request): Promise<any> => new Promise
     resolve({req});
 });
 
+// TODO: improve typing for MongoDB
+type Condition = { userId: UserId, date?: object };
 export let getExercises = async (req: Request, res: Response, next: NextFunction) => {
     const {userId, limit, from, to} = req.query;
     try {
         const {username} = res.locals.user;
 
-        await Exercise.find({userId})
+        await Exercise.find(getConditions())
             .sort("-updatedAt")
             .limit(parseInt(limit))
             .exec()
@@ -74,6 +77,14 @@ export let getExercises = async (req: Request, res: Response, next: NextFunction
             });
     } catch (e) {
         next(e);
+    }
+
+    function getConditions(): Condition {
+        const conditions: Condition = {userId};
+        if (from) {
+            conditions.date = {$gte: from};
+        }
+        return conditions;
     }
 };
 
