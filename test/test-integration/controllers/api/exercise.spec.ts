@@ -59,7 +59,7 @@ describe("POST /api/exercise/add", function () {
         {missingField: "description", validationMessage: "description is missing"},
         {missingField: "duration", validationMessage: "duration must be numeric"},
     ].forEach(({missingField, validationMessage}) =>
-        it(`should return 500 INTERNAL_SERVER_ERROR if ${missingField} is missing in request`, function () {
+        it(`should return 400 BAD_REQUEST if ${missingField} is missing in request`, function () {
             // given
             const invalidParams: any = {userId, duration: 11, description: "another", date: "2019-01-01"};
             delete invalidParams[missingField];
@@ -67,31 +67,31 @@ describe("POST /api/exercise/add", function () {
             // when
             // then
             return postAddExercise(invalidParams)
-                .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+                .expect(HttpStatus.BAD_REQUEST)
                 .then(assertErrorMessage(validationMessage));
         })
     );
 
-    it(`should return 500 INTERNAL_SERVER_ERROR if provided date is not in YYYY-MM-DD format`, function () {
+    it(`should return 400 BAD_REQUEST if provided date is not in YYYY-MM-DD format`, function () {
         // given
         const params = {userId, duration: 11, description: "another", date: "some invalid format"};
 
         // when
         // then
         return postAddExercise(params)
-            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+            .expect(HttpStatus.BAD_REQUEST)
             .then(assertErrorMessage("date must be in YYYY-MM-DD format"));
     });
 
-    it(`should return 500 INTERNAL_SERVER_ERROR if userId matches no existing user`, function () {
+    it(`should return 400 BAD_REQUEST if userId matches no existing user`, function () {
         // given
         const params = {userId: "some non-existent Id", duration: 11, description: "another"};
 
         // when
         // then
         return postAddExercise(params)
-            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(assertErrorMessage("userId &#39;some non-existent Id&#39; matches no user"))
+            .expect(HttpStatus.BAD_REQUEST)
+            .then(assertErrorMessage("userId 'some non-existent Id' matches no user"))
             .then(() => Exercise.find({userId: "some non-existent Id"}))
             .then(exercises => expect(exercises.length).toEqual(0));
     });
@@ -101,7 +101,7 @@ describe("POST /api/exercise/add", function () {
     }
 
     function assertErrorMessage(expected: string) {
-        return errorAssertion("cannot POST /api/exercise/add (500)", expected);
+        return errorAssertion("cannot POST /api/exercise/add (400)", expected);
     }
 });
 
@@ -207,31 +207,31 @@ describe("GET /api/exercise/log?{userId}[&from][&to][&limit]", function () {
             {
                 testCase: "userId is missing in request",
                 param: "",
-                error: "cannot GET /api/exercise/log (500)",
+                error: "cannot GET /api/exercise/log (400)",
                 message: "userId is missing"
             },
             {
                 testCase: "limit (when provided) is not numeric",
                 param: `?${convertToPostData({userId: "a", limit: "not numeric"})}`,
-                error: "cannot GET /api/exercise/log?userId=a&limit=not%20numeric (500)",
+                error: "cannot GET /api/exercise/log?userId=a&limit=not%20numeric (400)",
                 message: "limit must be numeric"
             },
             {
                 testCase: "from (when provided) is not in YYYY-MM-DD format",
                 param: `?${convertToPostData({userId: "a", from: "18-Aug-2018"})}`,
-                error: "cannot GET /api/exercise/log?userId=a&from=18-Aug-2018 (500)",
+                error: "cannot GET /api/exercise/log?userId=a&from=18-Aug-2018 (400)",
                 message: "date must be in YYYY-MM-DD format"
             },
             {
                 testCase: "to (when provided) is not in YYYY-MM-DD format",
                 param: `?${convertToPostData({userId: "a", to: "18-Aug-2018"})}`,
-                error: "cannot GET /api/exercise/log?userId=a&to=18-Aug-2018 (500)",
+                error: "cannot GET /api/exercise/log?userId=a&to=18-Aug-2018 (400)",
                 message: "date must be in YYYY-MM-DD format"
             },
         ].forEach(({testCase, param, error, message}) =>
-            it(`should return 500 INTERNAL_SERVER_ERROR if ${testCase}`, function () {
+            it(`should return 400 BAD_REQUEST if ${testCase}`, function () {
                 return getExerciseLog(param)
-                    .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(errorAssertion(error, message));
             })
         );

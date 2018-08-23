@@ -25,18 +25,18 @@ describe("POST /api/exercise/new-user", function () {
             .expect(HttpStatus.OK, expectedResponse);
     });
 
-    it(`should return 500 INTERNAL_SERVER_ERROR if username is missing in request`, function () {
+    it(`should return 400 BAD_REQUEST if username is missing in request`, function () {
         // given
         const params = {};
 
         // when
         // then
         return postAddUser(params)
-            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(errorAssertion("cannot POST /api/exercise/new-user (500)", "username is missing"));
+            .expect(HttpStatus.BAD_REQUEST)
+            .then(errorAssertion("cannot POST /api/exercise/new-user (400)", "username is missing"));
     });
 
-    it(`should return 500 INTERNAL_SERVER_ERROR if duplicated username is specified`, async function () {
+    it(`should return 400 BAD_REQUEST if duplicated username is specified`, async function () {
         // given
         const params = {username: "duplicated username"};
         await new User({...params, userId: "randomUuid"}).save();
@@ -44,8 +44,8 @@ describe("POST /api/exercise/new-user", function () {
         // when
         // then
         return postAddUser(params)
-            .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-            .then(errorAssertion("cannot POST /api/exercise/new-user (500)", "&#39;duplicated username&#39; is already in use"));
+            .expect(HttpStatus.BAD_REQUEST)
+            .then(errorAssertion("cannot POST /api/exercise/new-user (400)", "'duplicated username' is already in use"));
     });
 
     function postAddUser(params: object) {
