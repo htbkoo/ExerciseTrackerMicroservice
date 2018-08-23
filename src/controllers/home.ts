@@ -1,11 +1,7 @@
-import { Request, Response } from "express";
+import { absolutePath as getPathToSwaggerUi } from "swagger-ui-dist";
 
 /**
  * GET /
- * Home page.
+ * Home page by swagger-ui
  */
-export let index = (req: Request, res: Response) => {
-  res.render("home", {
-    title: "Home"
-  });
-};
+export { getPathToSwaggerUi };

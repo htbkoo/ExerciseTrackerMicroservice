@@ -14,7 +14,6 @@ import { setupMongoDb } from "./external/database/MongoDbConnector";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 import HttpStatus from "http-status";
 // Controllers (route handlers)
-import * as homeController from "./controllers/home";
 import { getApi } from "./controllers/api/api";
 import { validateFor } from "./controllers/common";
 import {
@@ -24,7 +23,7 @@ import {
     postAddExercise
 } from "./controllers/api/exercise";
 import { checkAddUserInputs, findUser, postAddUser, validateUserExists } from "./controllers/api/user";
-import { absolutePath as getPathToSwaggerUi } from "swagger-ui-dist";
+import { getPathToSwaggerUi } from "./controllers/home";
 
 logger.info("Start setting up app.");
 
@@ -62,16 +61,13 @@ app.use((req, res, next) => {
 });
 
 app.use(
-    express.static(getPathToSwaggerUi())
-);
-app.use(
     express.static(path.join(__dirname, "public"), {maxAge: 31557600000})
 );
 
 /**
  * Primary app routes.
  */
-app.get("/", homeController.index);
+app.use(express.static(getPathToSwaggerUi())); // map "/" to swagger-ui page;
 
 /**
  * API examples routes.
