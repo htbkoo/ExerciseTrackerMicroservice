@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import compression from "compression"; // compresses requests
 import session from "express-session";
 import bodyParser from "body-parser";
@@ -12,7 +12,7 @@ import expressValidator from "express-validator";
 import bluebird from "bluebird";
 import { setupMongoDb } from "./external/database/MongoDbConnector";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
-
+import HttpStatus from "http-status";
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
 import { getApi } from "./controllers/api/api";
@@ -39,7 +39,7 @@ const mongoConnector = setupMongoDb(MONGODB_URI, bluebird);
 // Express configuration
 app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "../views"));
-app.set("view engine", "pug");
+app.set("view engine", "ejs");
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -76,5 +76,19 @@ app.get("/api", getApi);
 app.post("/api/exercise/new-user", validateFor(checkAddUserInputs), postAddUser);
 app.post("/api/exercise/add", validateFor(checkAddExerciseInputs), findUser, validateUserExists, postAddExercise);
 app.get("/api/exercise/log", validateFor(checkGetExercisesInputs), findUser, validateUserExists, getExercises);
+
+
+// noinspection JSUnusedLocalSymbols
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.debug(err.stack);
+
+    const errorMessage = getErrorMessage();
+    res.status(HttpStatus.BAD_REQUEST).send(errorMessage);
+
+    function getErrorMessage() {
+        const hasMessageField = typeof err === "object" && "message" in err;
+        return hasMessageField ? err.message : err.toString();
+    }
+});
 
 export default app;

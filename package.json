@@ -1,10 +1,10 @@
 {
-  "name": "express-typescript-starter",
-  "version": "0.1.0",
-  "description": "A starting point for Node.js express apps with TypeScript",
+  "name": "exercise-tracker-microservice-hey",
+  "version": "1.0.0",
+  "description": "An exercise tracker microservice bootstrapped with express-typescript-starter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/TypeScript-Node-Starter"
+    "url": "https://github.com/htbkoo/ExerciseTrackerMicroservice"
   },
   "author": "Bowden Kelly",
   "license": "MIT",
@@ -36,6 +36,7 @@
     "compression": "^1.7.1",
     "connect-mongo": "^2.0.0",
     "dotenv": "^4.0.0",
+    "ejs": "^2.6.1",
     "errorhandler": "^1.5.0",
     "express": "^4.16.2",
     "express-flash": "0.0.2",
@@ -52,7 +53,6 @@
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "passport-local": "^1.0.0",
-    "pug": "^2.0.0-rc.4",
     "reflect-metadata": "^0.1.12",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
