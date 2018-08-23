@@ -1,7 +1,8 @@
 import HttpStatus from "http-status";
 
 import User from "../../../../src/models/User";
-import { errorAssertion, postWithData } from "./api.spec";
+import { postWithData } from "./util";
+import { errorAssertion } from "./util";
 
 const mockUuid = require("../../../../__mocks__/uuid/v4").mockUuidV4;
 

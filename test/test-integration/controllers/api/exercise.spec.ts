@@ -5,7 +5,8 @@ import app from "../../../../src/app";
 import User from "../../../../src/models/User";
 import * as datetimeService from "../../../../src/services/datetime/datetimeService";
 import Exercise from "../../../../src/models/Exercise";
-import { convertToPostData, errorAssertion, postWithData } from "./api.spec";
+import { postWithData } from "./util";
+import { convertToPostData, errorAssertion } from "./util";
 
 describe("POST /api/exercise/add", function () {
     const userId = "1";

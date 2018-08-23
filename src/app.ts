@@ -39,7 +39,7 @@ const mongoConnector = setupMongoDb(MONGODB_URI, bluebird);
 // Express configuration
 app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "../views"));
-app.set("view engine", "pug");
+app.set("view engine", "ejs");
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
