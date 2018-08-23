@@ -24,6 +24,7 @@ import {
     postAddExercise
 } from "./controllers/api/exercise";
 import { checkAddUserInputs, findUser, postAddUser, validateUserExists } from "./controllers/api/user";
+import { absolutePath as getPathToSwaggerUi } from "swagger-ui-dist";
 
 logger.info("Start setting up app.");
 
@@ -60,6 +61,9 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(
+    express.static(getPathToSwaggerUi())
+);
 app.use(
     express.static(path.join(__dirname, "public"), {maxAge: 31557600000})
 );
