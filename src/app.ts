@@ -67,6 +67,15 @@ app.use(
 /**
  * Primary app routes.
  */
+app.get("/", (req: Request, res: Response, next: NextFunction) => {
+    if (!("url" in req.query)) {
+        console.debug(`no url in query, populating`);
+        res.redirect("/?url=swagger/swagger.json");
+    } else {
+        console.debug(`url already populated in query, next`);
+        next();
+    }
+});
 app.use(express.static(getPathToSwaggerUi())); // map "/" to swagger-ui page;
 
 /**
