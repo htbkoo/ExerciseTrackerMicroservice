@@ -11,7 +11,7 @@ describe("GET /", () => {
     });
 
     it("should return 200 OK if url query param is already populated", () => {
-        supertest(app).get("/?url=someUrl")
+        return supertest(app).get("/?url=someUrl")
             .expect(HttpStatus.OK);
     });
 });
