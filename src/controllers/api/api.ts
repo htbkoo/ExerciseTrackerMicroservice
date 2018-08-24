@@ -5,10 +5,8 @@ import { DateTime } from "luxon";
 
 /**
  * GET /api
- * List of API examples.
+ * List of API examples (by redirecting to /)
  */
 export let getApi = (req: Request, res: Response) => {
-    res.render("api/index", {
-        title: "API Examples"
-    });
+    res.redirect("/");
 };
