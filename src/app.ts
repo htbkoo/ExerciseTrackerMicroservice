@@ -23,7 +23,7 @@ import {
     postAddExercise
 } from "./controllers/api/exercise";
 import { checkAddUserInputs, findUser, postAddUser, validateUserExists } from "./controllers/api/user";
-import { getPathToSwaggerUi } from "./controllers/home";
+import { appendUrlQueryStringIfMissing, getPathToSwaggerUi } from "./controllers/home";
 
 logger.info("Start setting up app.");
 
@@ -67,15 +67,7 @@ app.use(
 /**
  * Primary app routes.
  */
-app.get("/", (req: Request, res: Response, next: NextFunction) => {
-    if (!("url" in req.query)) {
-        console.debug(`no url in query, populating`);
-        res.redirect("/?url=swagger/swagger.json");
-    } else {
-        console.debug(`url already populated in query, next`);
-        next();
-    }
-});
+app.get("/", appendUrlQueryStringIfMissing);
 app.use(express.static(getPathToSwaggerUi())); // map "/" to swagger-ui page;
 
 /**
