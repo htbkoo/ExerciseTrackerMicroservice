@@ -62,7 +62,7 @@
             }
           },
           "400": {
-            "description": "Invalid input"
+            "description": "Invalid params"
           }
         }
       }
@@ -85,23 +85,48 @@
           {
             "name": "userId",
             "in": "formData",
-            "description": "The userId of the user",
+            "description": "userId for the user who owns the exercise",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "description": "The description of the exercise",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "duration",
+            "in": "formData",
+            "description": "The duration of exercise (in mins)",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "description": "The date of the exercise",
+            "required": false,
+            "type": "string",
+            "pattern": "YYYY-MM-DD"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Exercise"
-              }
+              "$ref": "#/definitions/Exercise"
+            },
+            "examples": {
+              "userId": "some user Id",
+              "description": "some description",
+              "duration": 1,
+              "date": "2018-08-24"
             }
           },
           "400": {
-            "description": "Invalid status value"
+            "description": "Invalid params"
           }
         }
       }
@@ -129,7 +154,6 @@
             "name": "from",
             "in": "query",
             "description": "The start date of the range of exercises to search for",
-            "required": true,
             "type": "string",
             "pattern": "YYYY-MM-DD"
           },
@@ -137,7 +161,6 @@
             "name": "to",
             "in": "query",
             "description": "The end date of the range of exercises to search for",
-            "required": true,
             "type": "string",
             "pattern": "YYYY-MM-DD"
           },
@@ -145,22 +168,50 @@
             "name": "limit",
             "in": "query",
             "description": "maximum number of exercises to return",
-            "required": true,
             "type": "number"
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation"
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ExercisesLog"
+            },
+            "examples": {
+              "userId": "some user Id",
+              "username": "some user name",
+              "count": 1,
+              "log": [
+                {
+                  "duration": 1,
+                  "description": "any",
+                  "date": "Wed, Aug 15, 2018"
+                }
+              ]
+            }
           },
           "400": {
-            "description": "Invalid tag value"
+            "description": "Invalid params"
           }
         }
       }
     }
   },
   "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "userId": {
+          "$ref": "#/definitions/UserId"
+        }
+      },
+      "xml": {
+        "name": "User"
+      }
+    },
     "Exercise": {
       "type": "object",
       "required": [
@@ -186,18 +237,44 @@
         "name": "Order"
       }
     },
-    "User": {
+    "ExercisesLog": {
       "type": "object",
+      "required": [
+        "userId",
+        "username",
+        "count",
+        "log"
+      ],
       "properties": {
+        "userId": {
+          "$ref": "#/definitions/UserId"
+        },
         "username": {
           "type": "string"
         },
-        "userId": {
-          "$ref": "#/definitions/UserId"
+        "count": {
+          "type": "number"
+        },
+        "log": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Log"
+          }
         }
-      },
-      "xml": {
-        "name": "User"
+      }
+    },
+    "Log": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "date": {
+          "$ref": "#/definitions/FormattedDate"
+        }
       }
     },
     "UserId": {
@@ -208,20 +285,10 @@
       "format": "date",
       "pattern": "YYYY-MM-DD"
     },
-    "ApiResponse": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "type": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        }
-      }
+    "FormattedDate": {
+      "type": "string",
+      "format": "date",
+      "pattern": "ccc, MMM DD, YYYY"
     }
   },
   "externalDocs": {
