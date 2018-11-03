@@ -1,0 +1,298 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the server of exercise-tracker-microservice-hey, an implementation of the 'exercise-tracker-microservice' project under [FreeCodeCamp 'Back End Development Certification' - 'API Projects'](https://www.freecodecamp.com/challenges/get-set-for-our-api-development-projects).<br>  You can find out more about it at the [GitHub repo](https://github.com/htbkoo/ExerciseTrackerMicroservice).",
+    "version": "1.0.0",
+    "title": "exercise-tracker-microservice-hey",
+    "contact": {
+      "url": "https://github.com/htbkoo/ExerciseTrackerMicroservice"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/htbkoo/ExerciseTrackerMicroservice/blob/master/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "user",
+      "description": "Adding users"
+    },
+    {
+      "name": "exercise",
+      "description": "Adding and getting exercises"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/api/exercise/new-user": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Create a New User",
+        "description": "",
+        "operationId": "createUser",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "formData",
+            "description": "The username of the user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            },
+            "examples": {
+              "username": "some user name",
+              "userId": "some user Id"
+            }
+          },
+          "400": {
+            "description": "Invalid params"
+          }
+        }
+      }
+    },
+    "/api/exercise/add": {
+      "post": {
+        "tags": [
+          "exercise"
+        ],
+        "summary": "Add exercise",
+        "description": "Add an exercise record for the specified user ",
+        "operationId": "addExercise",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "formData",
+            "description": "userId for the user who owns the exercise",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "description": "The description of the exercise",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "duration",
+            "in": "formData",
+            "description": "The duration of exercise (in mins)",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "description": "The date of the exercise",
+            "required": false,
+            "type": "string",
+            "pattern": "YYYY-MM-DD"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Exercise"
+            },
+            "examples": {
+              "userId": "some user Id",
+              "description": "some description",
+              "duration": 1,
+              "date": "2018-08-24"
+            }
+          },
+          "400": {
+            "description": "Invalid params"
+          }
+        }
+      }
+    },
+    "/api/exercise/log": {
+      "get": {
+        "tags": [
+          "exercise"
+        ],
+        "summary": "Get exercise logs under the specified user",
+        "description": "Filtering by date (from and/or to) and limit is possible. <br> Results are sorted according to insertion order in descending order",
+        "operationId": "getExercises",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "userId for the user to search for",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "The start date of the range of exercises to search for",
+            "type": "string",
+            "pattern": "YYYY-MM-DD"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "The end date of the range of exercises to search for",
+            "type": "string",
+            "pattern": "YYYY-MM-DD"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "maximum number of exercises to return",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ExercisesLog"
+            },
+            "examples": {
+              "userId": "some user Id",
+              "username": "some user name",
+              "count": 1,
+              "log": [
+                {
+                  "duration": 1,
+                  "description": "any",
+                  "date": "Wed, Aug 15, 2018"
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Invalid params"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "userId": {
+          "$ref": "#/definitions/UserId"
+        }
+      },
+      "xml": {
+        "name": "User"
+      }
+    },
+    "Exercise": {
+      "type": "object",
+      "required": [
+        "userId",
+        "description",
+        "duration"
+      ],
+      "properties": {
+        "userId": {
+          "$ref": "#/definitions/UserId"
+        },
+        "description": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "date": {
+          "$ref": "#/definitions/Date"
+        }
+      },
+      "xml": {
+        "name": "Order"
+      }
+    },
+    "ExercisesLog": {
+      "type": "object",
+      "required": [
+        "userId",
+        "username",
+        "count",
+        "log"
+      ],
+      "properties": {
+        "userId": {
+          "$ref": "#/definitions/UserId"
+        },
+        "username": {
+          "type": "string"
+        },
+        "count": {
+          "type": "number"
+        },
+        "log": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Log"
+          }
+        }
+      }
+    },
+    "Log": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "date": {
+          "$ref": "#/definitions/FormattedDate"
+        }
+      }
+    },
+    "UserId": {
+      "type": "string"
+    },
+    "Date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "YYYY-MM-DD"
+    },
+    "FormattedDate": {
+      "type": "string",
+      "format": "date",
+      "pattern": "ccc, MMM DD, YYYY"
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

@@ -10,6 +10,7 @@
   "license": "MIT",
   "scripts": {
     "start": "npm run build && npm run watch",
+    "start:glitch": "node builtForGlitch/server.js",
     "build": "npm run build-sass && npm run build-ts && npm run tslint && npm run copy-static-assets",
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
